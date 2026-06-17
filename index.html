@@ -144,9 +144,9 @@
     <canvas id="bgCanvas"></canvas>
     <button class="theme-toggle" id="themeToggle">☀️</button>
 
-    <!-- INTRO: اسم جنات -->
+    <!-- INTRO: اسم جنات مع صور -->
     <div class="intro-overlay" id="introOverlay">
-        <div class="intro-sparkles" id="introSparkles"></div>
+        <div class="intro-bg-img" id="introBgImg"></div>
         <div class="intro-name" id="introName">جَنات</div>
         <div class="intro-name-en" id="introNameEn">Jannat</div>
     </div>
@@ -160,9 +160,16 @@
             <p>اكتبي كلمة السر</p>
             <div class="pass-input-wrap">
                 <input type="password" id="passwordInput" placeholder="•••••••">
-                <button id="loginBtn">ادخلي 💜</button>
             </div>
             <p id="errorMsg" class="error-new hidden">غلط! حاولي تاني 🫵😂</p>
+            <!-- Password Slider -->
+            <div class="pass-slider" id="passSlider">
+                <div class="pass-slider-track" id="sliderTrack">
+                    <div class="pass-slider-fill" id="sliderFill"></div>
+                    <div class="pass-slider-thumb" id="sliderThumb">👉</div>
+                </div>
+                <span class="pass-slider-label">اسحبي 👈</span>
+            </div>
         </div>
     </div>
 
@@ -201,7 +208,7 @@
                 <div class="progress-fill" id="progressFill"></div>
                 <span class="progress-text" id="progressText">0 / 4</span>
             </div>
-            <div class="cards-grid cards-grid-2col">
+            <div class="cards-grid cards-grid-2col cards-grid-portrait">
                 <div class="card" data-index="0">
                     <div class="card-inner">
                         <div class="card-front" style="background:linear-gradient(145deg,#0e0518,#1a0828);">

@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('passwordOverlay');
     const mainContent = document.getElementById('mainContent');
     const passwordInput = document.getElementById('passwordInput');
-    const loginBtn = document.getElementById('loginBtn');
     const errorMsg = document.getElementById('errorMsg');
     const cards = document.querySelectorAll('.card');
     const modal = document.getElementById('photoModal');
@@ -21,12 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const introOverlay = document.getElementById('introOverlay');
     const introName = document.getElementById('introName');
     const introNameEn = document.getElementById('introNameEn');
-    const introSparkles = document.getElementById('introSparkles');
+    const introBgImg = document.getElementById('introBgImg');
     const loveOverlay = document.getElementById('loveOverlay');
     const loveTextContainer = document.getElementById('loveTextContainer');
     const loveEmojiRow = document.getElementById('loveEmojiRow');
     const loveNextHint = document.getElementById('loveNextHint');
     const themeBtn = document.getElementById('themeToggle');
+    const sliderTrack = document.getElementById('sliderTrack');
+    const sliderThumb = document.getElementById('sliderThumb');
+    const sliderFill = document.getElementById('sliderFill');
+    const passSlider = document.getElementById('passSlider');
+    const sliderLabel = document.querySelector('.pass-slider-label');
 
     const isMobile = window.innerWidth <= 768;
 
@@ -46,17 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== INTRO ANIMATION ==========
     function startIntro() {
-        const sparkleEmojis = ['✨','💜','🩷','🌸','⭐'];
-        for (let i = 0; i < 20; i++) {
-            const s = document.createElement('div');
-            s.className = 'intro-sparkle';
-            s.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
-            s.style.left = Math.random() * 100 + '%';
-            s.style.top = Math.random() * 100 + '%';
-            s.style.fontSize = (0.6 + Math.random() * 1.2) + 'rem';
-            s.style.animationDuration = (2 + Math.random() * 3) + 's';
-            s.style.animationDelay = (Math.random() * 4) + 's';
-            introSparkles.appendChild(s);
+        if (introBgImg) {
+            introBgImg.style.backgroundImage = 'url(photo-1.jpg)';
+            introBgImg.style.opacity = '0.2';
         }
 
         introName.classList.add('show');
@@ -220,12 +216,93 @@ document.addEventListener('DOMContentLoaded', () => {
                 passBox.style.borderColor = '';
                 passBox.style.border = '';
                 isProcessingPassword = false;
+                resetSlider();
             }, 2000);
         }
     }
 
-    loginBtn.addEventListener('click', checkPassword);
-    passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
+    passwordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            if (!isProcessingPassword && passwordInput.value.trim().length > 0) {
+                checkPassword();
+            }
+        }
+    });
+    passwordInput.addEventListener('input', () => {
+        if (passwordInput.value.trim().length > 0) {
+            passSlider.classList.add('active');
+        } else {
+            passSlider.classList.remove('active');
+        }
+    });
+
+    // ========== PASSWORD SLIDER ==========
+    let sliderDragging = false;
+    let sliderPct = 0;
+
+    function getSliderPos(clientX) {
+        const rect = sliderTrack.getBoundingClientRect();
+        let x = clientX - rect.left;
+        x = Math.max(0, Math.min(rect.width, x));
+        return x / rect.width;
+    }
+
+    function updateSlider(pct) {
+        sliderPct = Math.max(0, Math.min(1, pct));
+        sliderFill.style.width = (sliderPct * 100) + '%';
+        const trackW = sliderTrack.offsetWidth;
+        sliderThumb.style.left = (Math.max(0, trackW - 46) * sliderPct + 2) + 'px';
+        if (sliderPct >= 1) {
+            sliderThumb.textContent = '✅';
+            sliderThumb.classList.add('done');
+            if (sliderLabel) sliderLabel.classList.add('hidden');
+            checkPassword();
+        }
+    }
+
+    function resetSlider() {
+        sliderDragging = false;
+        sliderPct = 0;
+        sliderFill.style.width = '0%';
+        sliderThumb.style.left = '2px';
+        sliderThumb.textContent = '👉';
+        sliderThumb.classList.remove('done');
+        if (sliderLabel) sliderLabel.classList.remove('hidden');
+    }
+
+    if (sliderTrack) {
+        // Mouse
+        sliderTrack.addEventListener('mousedown', (e) => {
+            if (isProcessingPassword) return;
+            sliderDragging = true;
+            updateSlider(getSliderPos(e.clientX));
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (!sliderDragging) return;
+            updateSlider(getSliderPos(e.clientX));
+        });
+        document.addEventListener('mouseup', () => {
+            if (sliderDragging && sliderPct < 0.9) resetSlider();
+            sliderDragging = false;
+        });
+
+        // Touch
+        sliderTrack.addEventListener('touchstart', (e) => {
+            if (isProcessingPassword) return;
+            sliderDragging = true;
+            updateSlider(getSliderPos(e.touches[0].clientX));
+        }, { passive: true });
+        sliderTrack.addEventListener('touchmove', (e) => {
+            if (!sliderDragging) return;
+            e.preventDefault();
+            updateSlider(getSliderPos(e.touches[0].clientX));
+        }, { passive: false });
+        sliderTrack.addEventListener('touchend', () => {
+            if (sliderDragging && sliderPct < 0.9) resetSlider();
+            sliderDragging = false;
+        });
+        sliderTrack.addEventListener('touchcancel', () => { sliderDragging = false; resetSlider(); });
+    }
 
     // ========== AUTO AUTH ==========
     if (sessionStorage.getItem('auth')) {
