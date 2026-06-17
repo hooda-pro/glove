@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎮 مرحلة 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; overflow: hidden; touch-action: none; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+        }
+        .s2-hud {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: linear-gradient(180deg, rgba(10,10,15,0.85) 0%, transparent 100%);
+        }
+        .s2-hud > div { color: var(--text-primary); font-size: 1rem; font-weight: 700; }
+        .s2-hud .label { color: var(--text-secondary); font-size: 0.8rem; }
+        .s2-hud .value { color: var(--accent-gold); font-size: 1.3rem; }
+        .s2-score { text-align: center; }
+        .s2-best { text-align: left; direction: ltr; }
+
+        .s2-overlay {
+            position: fixed; inset: 0; z-index: 20;
+            background: rgba(0,0,0,0.85);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 2rem; text-align: center; animation: fadeIn 0.4s ease;
+        }
+        .s2-overlay.hidden { display: none; }
+        .s2-ov-icon { font-size: 4rem; margin-bottom: 0.8rem; animation: pulse 1.5s ease-in-out infinite; }
+        .s2-ov-title { font-size: 1.5rem; font-weight: 900; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .s2-ov-sub { font-size: 1rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.8; max-width: 350px; }
+        .s2-ov-btn {
+            padding: 0.9rem 2.5rem; font-size: 1.2rem; font-weight: 700;
+            font-family: var(--font-main); border: none; border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-gold), #f0b8c8);
+            color: #0a0a0f; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 30px var(--shadow-gold);
+        }
+        .s2-ov-btn:active { transform: scale(0.92); }
+        .s2-timer-num { font-size: 2.5rem; font-weight: 900; color: var(--accent-gold); margin: 0.5rem 0; }
+
+        .s2-hint {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            z-index: 10; color: var(--text-secondary); font-size: 0.8rem;
+            opacity: 0.6; animation: blink 2s ease-in-out infinite; pointer-events: none;
+        }
+        @media (min-width: 769px) { .s2-hint { display: none; } }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes blink { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+        <div class="s2-hud">
+            <div class="s2-score">
+                <div class="label">الوقت</div>
+                <div class="value" id="timerDisplay">30</div>
+            </div>
+            <div class="s2-best">
+                <div class="label">🏃 اهربي</div>
+                <div style="color:var(--text-secondary);font-size:0.75rem;">متخليش الصورة تمسكك</div>
+            </div>
+        </div>
+
+        <div class="s2-hint" id="touchHint">👆 اسحبي اصبعك عشان تتحركي</div>
+
+    <div class="s2-overlay" id="startOverlay">
+        <div class="s2-ov-icon">🎮</div>
+        <h2 class="s2-ov-title">عشان تروح للمرحلة 2</h2>
+        <p class="s2-ov-sub">وريني شطارتيج في اللعبة دي 👀</p>
+        <button class="s2-ov-btn" id="startBtn">ابدأ 🏃</button>
+    </div>
+
+    <div class="s2-overlay hidden" id="resultOverlay">
+        <div class="s2-ov-icon" id="resultIcon">🏆</div>
+        <h2 class="s2-ov-title" id="resultTitle"></h2>
+        <p class="s2-ov-sub" id="resultSub"></p>
+        <div class="s2-timer-num hidden" id="redirectTimer"></div>
+        <button class="s2-ov-btn hidden" id="resultBtn">حاول تاني 🔄</button>
+    </div>
+
+    <script>
+        if (!sessionStorage.getItem('auth')) { window.location.href = 'index.html'; }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() { canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        // ===== ARENA =====
+        const arena = { cx: 0, cy: 0, r: 0 };
+        function calcArena() {
+            arena.cx = canvas.width / 2;
+            arena.cy = canvas.height / 2;
+            arena.r = Math.min(canvas.width, canvas.height) * 0.42;
+        }
+        calcArena();
+
+        const player = { x: 0, y: 0, r: isMobile ? 16 : 20, speed: isMobile ? 2.5 : 3.2 };
+        const enemy = { x: 0, y: 0, r: isMobile ? 28 : 32, speed: isMobile ? 1.1 : 1.4 };
+
+        let keys = {};
+        let timeLeft = 30;
+        let gameActive = false;
+        let gameEnded = false;
+        let animFrame = null;
+        let timerInterval = null;
+
+        let touchMoveX = 0, touchMoveY = 0;
+
+        const enemyImg = new Image();
+        enemyImg.src = 'photo-1.jpg';
+
+        function clampInArena(entity) {
+            const dx = entity.x - arena.cx;
+            const dy = entity.y - arena.cy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const maxDist = arena.r - entity.r;
+            if (dist > maxDist) {
+                entity.x = arena.cx + (dx / dist) * maxDist;
+                entity.y = arena.cy + (dy / dist) * maxDist;
+            }
+        }
+
+        function initPositions() {
+            player.x = arena.cx - arena.r * 0.3;
+            player.y = arena.cy;
+            enemy.x = arena.cx + arena.r * 0.3;
+            enemy.y = arena.cy;
+            clampInArena(player);
+            clampInArena(enemy);
+        }
+
+        function drawArena() {
+            ctx.shadowColor = 'rgba(212,137,158,0.15)';
+            ctx.shadowBlur = 60;
+            ctx.strokeStyle = 'rgba(212,137,158,0.25)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(arena.cx, arena.cy, arena.r, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.strokeStyle = 'rgba(212,137,158,0.08)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(arena.cx, arena.cy, arena.r + 8, 0, Math.PI * 2);
+            ctx.stroke();
+
+            const grad = ctx.createRadialGradient(arena.cx, arena.cy, 0, arena.cx, arena.cy, arena.r);
+            grad.addColorStop(0, 'rgba(26,16,37,0.3)');
+            grad.addColorStop(0.7, 'rgba(26,16,37,0.1)');
+            grad.addColorStop(1, 'rgba(212,137,158,0.03)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(arena.cx, arena.cy, arena.r, 0, Math.PI * 2);
+            ctx.fill();
+
+            const dots = 12;
+            for (let i = 0; i < dots; i++) {
+                const a = (i / dots) * Math.PI * 2;
+                const dx = Math.cos(a) * (arena.r - 4);
+                const dy = Math.sin(a) * (arena.r - 4);
+                ctx.fillStyle = 'rgba(212,137,158,0.15)';
+                ctx.beginPath();
+                ctx.arc(arena.cx + dx, arena.cy + dy, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawPlayer() {
+            const x = player.x, y = player.y, r = player.r;
+
+            ctx.shadowColor = '#d4899e';
+            ctx.shadowBlur = 20;
+
+            const grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
+            grad.addColorStop(0, '#fff5f0');
+            grad.addColorStop(0.3, '#f0b8c8');
+            grad.addColorStop(1, '#d4899e');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.beginPath();
+            ctx.arc(x - r*0.25, y - r*0.3, r*0.2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawEnemy() {
+            const x = enemy.x, y = enemy.y, r = enemy.r;
+
+            ctx.shadowColor = 'rgba(231,76,60,0.35)';
+            ctx.shadowBlur = 25;
+
+            if (enemyImg.complete && enemyImg.naturalWidth > 0) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(enemyImg, x - r, y - r, r * 2, r * 2);
+                ctx.restore();
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = 'rgba(231,76,60,0.5)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.stroke();
+            } else {
+                ctx.shadowBlur = 0;
+                const grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
+                grad.addColorStop(0, '#e74c3c');
+                grad.addColorStop(1, '#c0392b');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.shadowBlur = 0;
+            ctx.font = '14px Cairo';
+            ctx.fillStyle = '#e74c3c';
+            ctx.textAlign = 'center';
+            ctx.fillText('❗', x, y - r - 8);
+        }
+
+        function update() {
+            if (!gameActive || gameEnded) return;
+
+            let dx = 0, dy = 0;
+
+            if (isMobile) {
+                dx = touchMoveX;
+                dy = touchMoveY;
+                const mag = Math.sqrt(dx*dx + dy*dy);
+                if (mag > 1) { dx /= mag; dy /= mag; }
+                touchMoveX *= 0.8;
+                touchMoveY *= 0.8;
+            } else {
+                if (keys['ArrowUp'] || keys['w'] || keys['W']) dy = -1;
+                if (keys['ArrowDown'] || keys['s'] || keys['S']) dy = 1;
+                if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -1;
+                if (keys['ArrowRight'] || keys['d'] || keys['D']) dx = 1;
+            }
+
+            if (dx !== 0 && dy !== 0) { const n = Math.SQRT2; dx /= n; dy /= n; }
+
+            player.x += dx * player.speed;
+            player.y += dy * player.speed;
+            clampInArena(player);
+
+            const ex = player.x - enemy.x;
+            const ey = player.y - enemy.y;
+            const dist = Math.sqrt(ex * ex + ey * ey);
+
+            if (dist > 0) {
+                const spd = enemy.speed + (timeLeft < 8 ? 0.25 : 0);
+                enemy.x += (ex / dist) * spd;
+                enemy.y += (ey / dist) * spd;
+            }
+            clampInArena(enemy);
+
+            if (dist < player.r + enemy.r - 6) {
+                gameActive = false; gameEnded = true;
+                clearInterval(timerInterval);
+                showCaught();
+                return;
+            }
+
+            // Render
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawArena();
+            drawEnemy();
+            drawPlayer();
+        }
+
+        function gameLoop() {
+            update();
+            if (!gameEnded) animFrame = requestAnimationFrame(gameLoop);
+        }
+
+        function startTimer() {
+            timeLeft = 30;
+            document.getElementById('timerDisplay').textContent = '30';
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerDisplay').textContent = Math.ceil(timeLeft);
+                if (timeLeft <= 0) {
+                    gameActive = false; gameEnded = true;
+                    clearInterval(timerInterval);
+                    showWin();
+                }
+            }, 1000);
+        }
+
+        const startOverlay = document.getElementById('startOverlay');
+        const resultOverlay = document.getElementById('resultOverlay');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultSub = document.getElementById('resultSub');
+        const resultBtn = document.getElementById('resultBtn');
+        const redirectTimer = document.getElementById('redirectTimer');
+
+        function showCaught() {
+            resultIcon.textContent = '😈';
+            resultTitle.textContent = 'مسكتك! 🤣';
+            resultSub.textContent = 'ههههههه يلا حاولي تاني يا بت 🫵😂';
+            resultBtn.classList.remove('hidden');
+            resultBtn.textContent = 'حاولي تاني 🔄';
+            resultBtn.onclick = restartGame;
+            redirectTimer.classList.add('hidden');
+            resultOverlay.classList.remove('hidden');
+        }
+
+        function showWin() {
+            resultIcon.textContent = '🏆';
+            resultTitle.textContent = 'ما انت شاطر اهو! 🎉';
+            resultSub.textContent = 'أمال لما بتخشي علي اسكواد بتقعي نوك ليه؟! 😂';
+            resultBtn.classList.add('hidden');
+            redirectTimer.classList.remove('hidden');
+            let secs = 5;
+            redirectTimer.textContent = `خلال ${secs} ثواني...`;
+            const ri = setInterval(() => {
+                secs--;
+                if (secs > 0) redirectTimer.textContent = `خلال ${secs} ثواني...`;
+                else { clearInterval(ri); redirectTimer.textContent = 'يتبع... 🤔'; }
+            }, 1000);
+            resultOverlay.classList.remove('hidden');
+        }
+
+        function restartGame() {
+            resultOverlay.classList.add('hidden');
+            initPositions();
+            timeLeft = 30;
+            document.getElementById('timerDisplay').textContent = '30';
+            gameActive = true; gameEnded = false;
+            if (timerInterval) clearInterval(timerInterval);
+            startTimer();
+            animFrame = requestAnimationFrame(gameLoop);
+        }
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            startOverlay.classList.add('hidden');
+            document.getElementById('touchHint').classList.add('hidden');
+            initPositions();
+            gameActive = true; gameEnded = false;
+            startTimer();
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawArena(); drawEnemy(); drawPlayer();
+            animFrame = requestAnimationFrame(gameLoop);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+        });
+        document.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+        let lastTX = 0, lastTY = 0;
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const t = e.touches[0];
+            lastTX = t.clientX; lastTY = t.clientY;
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const t = e.touches[0];
+            touchMoveX = (t.clientX - lastTX) * 0.08;
+            touchMoveY = (t.clientY - lastTY) * 0.08;
+            const mag = Math.sqrt(touchMoveX*touchMoveX + touchMoveY*touchMoveY);
+            if (mag > 2) { touchMoveX /= mag/2; touchMoveY /= mag/2; }
+            lastTX = t.clientX; lastTY = t.clientY;
+        });
+        canvas.addEventListener('touchend', (e) => { e.preventDefault(); touchMoveX = 0; touchMoveY = 0; });
+        canvas.addEventListener('touchcancel', () => { touchMoveX = 0; touchMoveY = 0; });
+
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawArena(); drawEnemy(); drawPlayer();
+    </script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>😏 خلص كلام</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: radial-gradient(ellipse at center, #140d1a 0%, #0a0a0f 70%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .p3-box {
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            animation: scaleIn 0.6s ease;
+        }
+        .p3-icon { font-size: 3.5rem; margin-bottom: 0.5rem; animation: pulse 2s ease-in-out infinite; }
+        .p3-title { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.3rem; line-height: 1.6; }
+        .p3-sub { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+
+        .p3-display {
+            width: 80px; height: 60px; margin: 0 auto 1.5rem;
+            background: #1a1a24; border: 2px solid #333;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 700; font-family: var(--font-main);
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+        .p3-display.filled { border-color: var(--accent-gold); box-shadow: 0 0 20px var(--shadow-gold); }
+
+        .p3-numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            max-width: 250px;
+            margin: 0 auto 1rem;
+        }
+        .p3-num {
+            height: 55px; border: none; border-radius: 14px;
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary); font-size: 1.4rem;
+            font-weight: 700; font-family: var(--font-main);
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            -webkit-tap-highlight-color: transparent; user-select: none;
+        }
+        .p3-num:active { transform: scale(0.92); background: rgba(212,137,158,0.15); }
+        .p3-num.clear { background: rgba(231,76,60,0.15); color: #e74c3c; font-size: 1rem; }
+
+        .p3-done {
+            width: 100%; max-width: 250px; padding: 0.9rem;
+            border: none; border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-gold), #f0b8c8);
+            color: #0a0a0f; font-size: 1.2rem;
+            font-weight: 700; font-family: var(--font-main);
+            cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 20px var(--shadow-gold);
+        }
+        .p3-done:active { transform: scale(0.95); }
+        .p3-done:disabled { opacity: 0.4; transform: none; box-shadow: none; }
+
+        .p3-next {
+            width: 100%; max-width: 250px; padding: 0.9rem;
+            border: none; border-radius: 14px;
+            background: linear-gradient(135deg, #b8a0d4, #c0a8e0);
+            color: #0a0a0f; font-size: 1.1rem;
+            font-weight: 700; font-family: var(--font-main);
+            cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+            box-shadow: 0 0 20px rgba(184,160,212,0.4);
+            animation: scaleIn 0.4s ease;
+        }
+        .p3-next:active { transform: scale(0.95); }
+        .p3-next.hidden { display: none; }
+
+        .p3-error {
+            margin-top: 1rem; padding: 1rem; border-radius: 14px;
+            background: rgba(231,76,60,0.1);
+            border: 1px solid rgba(231,76,60,0.3);
+            animation: scaleIn 0.4s ease;
+        }
+        .p3-error p { color: #e74c3c; font-size: 0.95rem; font-weight: 700; line-height: 1.6; }
+        .p3-error .error-icon { font-size: 2rem; margin-bottom: 0.3rem; }
+        .p3-block-timer { margin-top: 0.8rem; color: var(--text-secondary); font-size: 0.8rem; }
+        .hidden { display: none !important; }
+
+        /* ===== STEP 2 - Date ===== */
+        .p3-date-row {
+            display: flex; gap: 0.5rem; justify-content: center;
+            margin: 0 auto 1.5rem; direction: ltr;
+        }
+        .p3-date-field {
+            text-align: center;
+        }
+        .p3-date-field .label {
+            font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.3rem;
+        }
+        .p3-date-field .value {
+            width: 70px; height: 50px;
+            background: #1a1a24; border: 2px solid #333;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; font-weight: 700; font-family: var(--font-main);
+            color: var(--text-primary); cursor: pointer;
+            transition: all 0.3s;
+        }
+        .p3-date-field .value.active {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px var(--shadow-gold);
+        }
+        .p3-date-field .value.filled { border-color: var(--accent-gold); }
+        .p3-date-sep {
+            font-size: 1.5rem; color: var(--text-secondary);
+            display: flex; align-items: center; padding: 0 2px; padding-top: 1.3rem;
+        }
+
+        .p3-step { animation: fadeIn 0.5s ease; }
+        .p3-step.hidden { display: none !important; }
+
+        /* ===== SUCCESS ===== */
+        .p3-success { animation: scaleIn 0.6s ease; }
+        .p3-success-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .p3-success-text { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); line-height: 1.8; }
+
+        .p3-final-btn {
+            padding: 0.9rem 2.5rem; font-size: 1.2rem; font-weight: 700;
+            font-family: var(--font-main); border: none; border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-gold), #f0b8c8);
+            color: #0a0a0f; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 30px var(--shadow-gold); margin-top: 1.5rem;
+        }
+        .p3-final-btn:active { transform: scale(0.92); }
+
+        .p3-stars { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+        .p3-star {
+            position: absolute; border-radius: 50%;
+            animation: starTwinkle ease-in-out infinite;
+        }
+        @keyframes starTwinkle { 0%,100%{opacity:0;transform:scale(0)} 50%{opacity:1;transform:scale(1)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    </style>
+</head>
+<body>
+    <div class="p3-stars" id="p3Stars"></div>
+
+    <div class="p3-box">
+        <!-- STEP 1: كلمتي كام واحد -->
+        <div class="p3-step" id="step1">
+            <div class="p3-icon">🤨</div>
+            <h1 class="p3-title">انتي كلمتي كام واحد في حياتك؟ 🤔</h1>
+            <p class="p3-sub">عشان ارجعك للصفحة الأولي 😏</p>
+
+            <div class="p3-display" id="display"></div>
+
+            <div class="p3-numpad">
+                <button class="p3-num" data-n="1">1</button>
+                <button class="p3-num" data-n="2">2</button>
+                <button class="p3-num" data-n="3">3</button>
+                <button class="p3-num" data-n="4">4</button>
+                <button class="p3-num" data-n="5">5</button>
+                <button class="p3-num" data-n="6">6</button>
+                <button class="p3-num" data-n="7">7</button>
+                <button class="p3-num" data-n="8">8</button>
+                <button class="p3-num" data-n="9">9</button>
+                <button class="p3-num" data-n=""></button>
+                <button class="p3-num" data-n="0">0</button>
+                <button class="p3-num clear" id="clearBtn">مسح</button>
+            </div>
+
+            <button class="p3-done" id="doneBtn">تم ✅</button>
+            <button class="p3-next hidden" id="nextBtn">كمل وريح بالك 👌</button>
+
+            <div id="errorBox" class="p3-error hidden">
+                <div class="error-icon">🚫</div>
+                <p>غلط! انا عارف انتي كلمتي كام واحد 🫵😂</p>
+                <p style="margin-top:0.3rem;font-size:0.85rem;color:var(--text-secondary);">خدي حظر دقيقة 🤫</p>
+                <div class="p3-block-timer" id="blockTimer">انتظري 60 ثانية...</div>
+            </div>
+        </div>
+
+        <!-- STEP 2: تاريخ الميلاد -->
+        <div class="p3-step hidden" id="step2">
+            <div class="p3-icon">🗓️</div>
+            <h1 class="p3-title">اي دليلي اكتبي تاريخ ميلاد 🫵</h1>
+            <p class="p3-sub">تاريخ ميلاد اللي كلمتي 😏</p>
+
+            <div class="p3-date-row">
+                <div class="p3-date-field">
+                    <div class="label">السنة</div>
+                    <div class="value" id="dateYear" data-field="year" data-max="4">____</div>
+                </div>
+                <div class="p3-date-sep">/</div>
+                <div class="p3-date-field">
+                    <div class="label">الشهر</div>
+                    <div class="value" id="dateMonth" data-field="month" data-max="2">__</div>
+                </div>
+                <div class="p3-date-sep">/</div>
+                <div class="p3-date-field">
+                    <div class="label">اليوم</div>
+                    <div class="value" id="dateDay" data-field="day" data-max="2">__</div>
+                </div>
+            </div>
+
+            <div class="p3-numpad">
+                <button class="p3-num" data-n="1">1</button>
+                <button class="p3-num" data-n="2">2</button>
+                <button class="p3-num" data-n="3">3</button>
+                <button class="p3-num" data-n="4">4</button>
+                <button class="p3-num" data-n="5">5</button>
+                <button class="p3-num" data-n="6">6</button>
+                <button class="p3-num" data-n="7">7</button>
+                <button class="p3-num" data-n="8">8</button>
+                <button class="p3-num" data-n="9">9</button>
+                <button class="p3-num" data-n=""></button>
+                <button class="p3-num" data-n="0">0</button>
+                <button class="p3-num clear" id="dateClearBtn">مسح</button>
+            </div>
+
+            <button class="p3-done" id="dateDoneBtn">خلاص ✅</button>
+
+            <div id="dateErrorBox" class="p3-error hidden">
+                <div class="error-icon">🚫</div>
+                <p>غلط! التاريخ مش مضبوط 🫵😂</p>
+                <p style="margin-top:0.3rem;font-size:0.85rem;color:var(--text-secondary);">خدي حظر دقيقة 🤫</p>
+                <div class="p3-block-timer" id="dateBlockTimer">انتظري 60 ثانية...</div>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="p3-step hidden" id="step3">
+            <div class="p3-icon">💗</div>
+            <h1 class="p3-title">تمام يا جميلة 🎉</h1>
+            <p class="p3-sub">بحبك يا جنات 🤍🤍🤍</p>
+            <div class="p3-success">
+                <div class="p3-success-text">
+                    طيب خلاص يلا نبدأ 🫶💕<br>
+                    وريني شطارتيج بقي في اللعبة 😏
+                </div>
+                <button class="p3-final-btn" id="finalBtn">يلا بينا 💗</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (!sessionStorage.getItem('auth')) { window.location.href = 'index.html'; }
+
+        // ===== STARS =====
+        const starsContainer = document.getElementById('p3Stars');
+        for (let i = 0; i < 40; i++) {
+            const s = document.createElement('div'); s.className = 'p3-star';
+            s.style.left = Math.random() * 100 + '%'; s.style.top = Math.random() * 100 + '%';
+            s.style.width = s.style.height = (1 + Math.random() * 2) + 'px';
+            s.style.animationDuration = (2 + Math.random() * 3) + 's';
+            s.style.animationDelay = (Math.random() * 4) + 's';
+            starsContainer.appendChild(s);
+        }
+
+        // ===== STEP 1: Single digit =====
+        const display = document.getElementById('display');
+        const doneBtn = document.getElementById('doneBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const errorBox = document.getElementById('errorBox');
+        const blockTimer = document.getElementById('blockTimer');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        let value1 = '';
+        let blocked1 = false;
+
+        function updateDisplay1() {
+            display.textContent = value1 || '_';
+            display.classList.toggle('filled', value1.length === 1);
+            doneBtn.disabled = value1.length !== 1;
+        }
+
+        document.querySelectorAll('#step1 .p3-num[data-n]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (blocked1 || step1.classList.contains('hidden')) return;
+                const n = btn.dataset.n;
+                if (value1.length < 1) { value1 += n; updateDisplay1(); }
+            });
+        });
+        clearBtn.addEventListener('click', () => {
+            if (blocked1 || step1.classList.contains('hidden')) return;
+            value1 = value1.slice(0, -1); updateDisplay1();
+        });
+
+        doneBtn.addEventListener('click', () => {
+            if (blocked1 || value1.length !== 1) return;
+            if (value1 === '1') {
+                doneBtn.textContent = 'تمام 🎉';
+                doneBtn.disabled = true;
+                setTimeout(() => {
+                    step1.classList.add('hidden');
+                    step2.classList.remove('hidden');
+                    initDateStep();
+                }, 600);
+            } else {
+                blocked1 = true;
+                errorBox.classList.remove('hidden');
+                doneBtn.disabled = true;
+                let secs = 60;
+                blockTimer.textContent = `انتظري ${secs} ثانية...`;
+                const interval = setInterval(() => {
+                    secs--; blockTimer.textContent = `انتظري ${secs} ثانية...`;
+                    if (secs <= 0) {
+                        clearInterval(interval);
+                        blocked1 = false; errorBox.classList.add('hidden');
+                        doneBtn.disabled = false; value1 = ''; updateDisplay1();
+                        blockTimer.textContent = '';
+                    }
+                }, 1000);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => { window.location.href = 'stage2.html'; });
+
+        // ===== STEP 2: Date =====
+        const dateFields = {
+            year: { el: document.getElementById('dateYear'), val: '', max: 4 },
+            month: { el: document.getElementById('dateMonth'), val: '', max: 2 },
+            day: { el: document.getElementById('dateDay'), val: '', max: 2 }
+        };
+        let activeField = 'year';
+        let blocked2 = false;
+
+        function initDateStep() {
+            Object.keys(dateFields).forEach(k => { dateFields[k].val = ''; dateFields[k].el.textContent = k === 'year' ? '____' : '__'; });
+            activeField = 'year';
+            dateFields[activeField].el.classList.add('active');
+        }
+
+        function updateDateField(field) {
+            const f = dateFields[field];
+            const placeholder = field === 'year' ? '____' : '__';
+            const len = f.val.length;
+            const text = f.val.padEnd(f.max, '_').split('').join(' ');
+            if (f.val.length > 0 && f.val.length <= f.max) {
+                f.el.textContent = f.val;
+                f.el.classList.add('filled');
+            } else {
+                f.el.textContent = placeholder;
+                f.el.classList.remove('filled');
+            }
+            if (f.val.length >= f.max) {
+                f.el.classList.remove('active');
+                // Auto-advance to next field
+                if (field === 'year') { setActiveField('month'); }
+                else if (field === 'month') { setActiveField('day'); }
+                else { f.el.classList.remove('active'); }
+            }
+            document.getElementById('dateDoneBtn').disabled = !checkDateComplete();
+        }
+
+        function setActiveField(field) {
+            Object.keys(dateFields).forEach(k => dateFields[k].el.classList.remove('active'));
+            activeField = field;
+            dateFields[field].el.classList.add('active');
+        }
+
+        function checkDateComplete() {
+            return dateFields.year.val.length === 4 && dateFields.month.val.length >= 1 && dateFields.day.val.length >= 1;
+        }
+
+        document.querySelectorAll('#step2 .p3-num[data-n]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (blocked2 || step2.classList.contains('hidden')) return;
+                const f = dateFields[activeField];
+                const n = btn.dataset.n;
+                if (n === '') return;
+                if (f.val.length < f.max) {
+                    f.val += n;
+                    updateDateField(activeField);
+                }
+            });
+        });
+
+        // Click on date fields to switch
+        Object.keys(dateFields).forEach(k => {
+            dateFields[k].el.addEventListener('click', () => {
+                if (blocked2) return;
+                setActiveField(k);
+            });
+        });
+
+        document.getElementById('dateClearBtn').addEventListener('click', () => {
+            if (blocked2) return;
+            const f = dateFields[activeField];
+            f.val = f.val.slice(0, -1);
+            updateDateField(activeField);
+        });
+
+        document.getElementById('dateDoneBtn').addEventListener('click', () => {
+            if (blocked2 || !checkDateComplete()) return;
+            const y = dateFields.year.val, m = dateFields.month.val, d = dateFields.day.val;
+            if (y === '2010' && (m === '1' || m === '01') && (d === '27' || d === '027')) {
+                document.getElementById('dateDoneBtn').textContent = 'تمام 🎉';
+                document.getElementById('dateDoneBtn').disabled = true;
+                setTimeout(() => {
+                    step2.classList.add('hidden');
+                    step3.classList.remove('hidden');
+                }, 600);
+            } else {
+                blocked2 = true;
+                document.getElementById('dateErrorBox').classList.remove('hidden');
+                document.getElementById('dateDoneBtn').disabled = true;
+                let secs = 60;
+                const bt = document.getElementById('dateBlockTimer');
+                bt.textContent = `انتظري ${secs} ثانية...`;
+                const interval = setInterval(() => {
+                    secs--; bt.textContent = `انتظري ${secs} ثانية...`;
+                    if (secs <= 0) {
+                        clearInterval(interval);
+                        blocked2 = false;
+                        document.getElementById('dateErrorBox').classList.add('hidden');
+                        document.getElementById('dateDoneBtn').disabled = false;
+                        initDateStep(); bt.textContent = '';
+                    }
+                }, 1000);
+            }
+        });
+
+        document.getElementById('finalBtn').addEventListener('click', () => {
+            window.location.href = 'stage2.html';
+        });
+
+        updateDisplay1();
+    </script>
+</body>
+</html>

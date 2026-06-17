@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع خاص</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div id="passwordOverlay" class="overlay">
+        <div class="bubbles-container">
+            <div class="bubble" style="--x:10%;--s:6;--d:0s;"></div>
+            <div class="bubble" style="--x:25%;--s:4;--d:0.5s;"></div>
+            <div class="bubble" style="--x:40%;--s:8;--d:1s;"></div>
+            <div class="bubble" style="--x:55%;--s:5;--d:1.5s;"></div>
+            <div class="bubble" style="--x:70%;--s:7;--d:2s;"></div>
+            <div class="bubble" style="--x:85%;--s:3;--d:2.5s;"></div>
+            <div class="bubble" style="--x:15%;--s:5;--d:3s;"></div>
+            <div class="bubble" style="--x:50%;--s:6;--d:0.8s;"></div>
+            <div class="bubble" style="--x:30%;--s:4;--d:1.2s;"></div>
+            <div class="bubble" style="--x:65%;--s:7;--d:1.8s;"></div>
+            <div class="bubble" style="--x:90%;--s:5;--d:2.2s;"></div>
+            <div class="bubble" style="--x:5%;--s:3;--d:0.3s;"></div>
+            <div class="bubble" style="--x:45%;--s:8;--d:1.7s;"></div>
+            <div class="bubble" style="--x:78%;--s:4;--d:2.8s;"></div>
+            <div class="bubble" style="--x:20%;--s:6;--d:3.2s;"></div>
+        </div>
+
+        <div class="password-box">
+            <div class="pass-icon">💗</div>
+            <h1 class="pass-title">لجَنات 🤍</h1>
+            <p class="pass-sub">اكتبي كلمة السر ياقلبي 🫶</p>
+            <div class="input-group">
+                <input type="password" id="passwordInput" placeholder="•••••••" style="text-align:center;" autofocus>
+                <button id="loginBtn">➡️</button>
+            </div>
+            <p id="errorMsg" class="error hidden">غلط! حاول تاني 🫵😂</p>
+        </div>
+    </div>
+
+    <div id="mainContent" class="hidden">
+        <section class="hero" id="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
+                <div class="balloons">
+                    <div class="balloon b1" style="font-size:2.5rem;">🌸</div>
+                    <div class="balloon b2" style="font-size:2rem;">💗</div>
+                    <div class="balloon b3" style="font-size:2.8rem;">🌷</div>
+                    <div class="balloon b4" style="font-size:2.2rem;">🩷</div>
+                    <div class="balloon b5" style="font-size:2.6rem;">🌺</div>
+                    <div class="balloon b6" style="font-size:2rem;">💕</div>
+                </div>
+                <h1 class="main-title glitch" data-text="بحبك يا جنات 🤍🤍🤍">بحبك يا جنات 🤍🤍🤍</h1>
+                <p class="sub-title">أحلى بنت في الدنيا كلها 🫶💕</p>
+                <div class="next-hint" id="nextHint">
+                    <span>انزل تحت 👇</span>
+                    <div class="scroll-arrow">⬇️</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cards-section cards-section-hidden" id="cardsSection">
+            <div class="cards-header">
+                <h2 class="section-title">ذكرياتنا 💕</h2>
+                <p class="section-sub">اضغطي على كل بطاقة عشان تشوفي الذكرى</p>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <span class="progress-text" id="progressText">0 / 4</span>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card" data-index="0">
+                    <div class="card-inner">
+                        <div class="card-front" style="background:linear-gradient(145deg,#1a1025,#241530);">
+                            <div class="card-num">01</div>
+                            <div class="card-front-icon">💗</div>
+                            <h3>ذكرى أولى</h3>
+                            <p>اضغطي عشان تشوفي 🫶</p>
+                        </div>
+                        <div class="card-back">
+                            <div class="photo-placeholder photo-1"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" data-index="1">
+                    <div class="card-inner">
+                        <div class="card-front" style="background:linear-gradient(145deg,#1a1025,#241530);">
+                            <div class="card-num">02</div>
+                            <div class="card-front-icon">🌷</div>
+                            <h3>ذكرى ثانية</h3>
+                            <p>اضغطي عشان تشوفي 🫶</p>
+                        </div>
+                        <div class="card-back">
+                            <div class="photo-placeholder photo-2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" data-index="2">
+                    <div class="card-inner">
+                        <div class="card-front" style="background:linear-gradient(145deg,#0f1a1e,#152228);">
+                            <div class="card-num">03</div>
+                            <div class="card-front-icon">🌸</div>
+                            <h3>ذكرى ثالثة</h3>
+                            <p>اضغطي عشان تشوفي 🫶</p>
+                        </div>
+                        <div class="card-back">
+                            <div class="photo-placeholder photo-3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" data-index="3">
+                    <div class="card-inner">
+                        <div class="card-front" style="background:linear-gradient(145deg,#0f1a1e,#152228);">
+                            <div class="card-num">04</div>
+                            <div class="card-front-icon">🩷</div>
+                            <h3>ذكرى رابعة</h3>
+                            <p>اضغطي عشان تشوفي 🫶</p>
+                        </div>
+                        <div class="card-back">
+                            <div class="photo-placeholder photo-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cards-complete hidden" id="cardsComplete">
+                <div class="complete-icon">🎉</div>
+                <p class="complete-text">استني انزلي تحت كمان 😏</p>
+            </div>
+        </section>
+
+        <section class="cta-section hidden" id="ctaSection">
+            <div class="cta-glow"></div>
+            <div class="cta-content">
+                <div class="cta-tease">
+                    <span class="tease-icon">🤔</span>
+                    <h2>لسه فاضلكي حاجة كمان 😏</h2>
+                </div>
+                <button id="ctaBtn" class="cta-button">اضغطي هنا يا بتاعة البنات 😂🫵</button>
+                <p class="cta-sub">أوعي تندمي 🩷</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="photoModal" class="modal hidden">
+        <span class="modal-close">&times;</span>
+        <div class="modal-content">
+            <div class="modal-photo-frame"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
