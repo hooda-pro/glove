@@ -359,7 +359,7 @@
             .p2-dialog-buttons { flex-direction: column; gap: 0.5rem; }
             .p2-dialog-btn { min-width: auto; width: 100%; padding: 0.7rem 1rem; font-size: 1rem; }
             .p2-timer { width: 60px; height: 60px; font-size: 1.8rem; }
-            .theme-toggle { top: 0.5rem; left: 0.5rem; width: 38px; height: 38px; font-size: 1.1rem; }
+            .theme-toggle { margin: 0.5rem auto; }
         }
         @media (max-width: 360px) {
             .page2-wrap { padding: 0.8rem; }
@@ -371,7 +371,7 @@
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">☀️</button>
+    <button class="theme-toggle" id="themeToggle"></button>
     <div class="falling-hearts" id="fallingHearts"></div>
     <div class="sparkle-container" id="sparkleContainer"></div>
 
@@ -444,13 +444,13 @@
             document.documentElement.setAttribute('data-theme', st);
             const btn = document.getElementById('themeToggle');
             if (btn) {
-                btn.textContent = st === 'dark' ? '☀️' : '🌙';
+                btn.innerHTML = `<span class="icon">${st === 'dark' ? '☀️' : '🌙'}</span><span class="label"></span>`;
                 btn.addEventListener('click', () => {
                     const cur = document.documentElement.getAttribute('data-theme');
                     const nxt = cur === 'dark' ? 'light' : 'dark';
                     document.documentElement.setAttribute('data-theme', nxt);
                     localStorage.setItem('theme', nxt);
-                    btn.textContent = nxt === 'dark' ? '☀️' : '🌙';
+                    btn.innerHTML = `<span class="icon">${nxt === 'dark' ? '☀️' : '🌙'}</span><span class="label"></span>`;
                 });
             }
         })();

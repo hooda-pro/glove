@@ -108,7 +108,7 @@
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">☀️</button>
+    <button class="theme-toggle" id="themeToggle"></button>
     <canvas id="gameCanvas"></canvas>
 
         <div class="s2-hud">
@@ -154,13 +154,13 @@
             document.documentElement.setAttribute('data-theme', st);
             const btn = document.getElementById('themeToggle');
             if (btn) {
-                btn.textContent = st === 'dark' ? '☀️' : '🌙';
+                btn.innerHTML = `<span class="icon">${st === 'dark' ? '☀️' : '🌙'}</span><span class="label"></span>`;
                 btn.addEventListener('click', () => {
                     const cur = document.documentElement.getAttribute('data-theme');
                     const nxt = cur === 'dark' ? 'light' : 'dark';
                     document.documentElement.setAttribute('data-theme', nxt);
                     localStorage.setItem('theme', nxt);
-                    btn.textContent = nxt === 'dark' ? '☀️' : '🌙';
+                    btn.innerHTML = `<span class="icon">${nxt === 'dark' ? '☀️' : '🌙'}</span><span class="label"></span>`;
                 });
             }
         })();

@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
     if (themeBtn) {
-        themeBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        themeBtn.innerHTML = `<span class="icon">${savedTheme === 'dark' ? '☀️' : '🌙'}</span><span class="label"></span>`;
         themeBtn.addEventListener('click', () => {
             const cur = document.documentElement.getAttribute('data-theme');
             const next = cur === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('theme', next);
-            themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+            themeBtn.innerHTML = `<span class="icon">${next === 'dark' ? '☀️' : '🌙'}</span><span class="label"></span>`;
         });
     }
 
@@ -54,9 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             introBgImg.style.backgroundImage = 'url(photo-1.jpg)';
             introBgImg.style.opacity = '0.2';
         }
-
         introName.classList.add('show');
-
         setTimeout(() => {
             introName.style.opacity = '0';
             introName.style.transform = 'scale(0.8)';
@@ -66,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 introNameEn.style.transform = 'scale(1)';
             }, 800);
         }, 2500);
-
         setTimeout(() => {
             introOverlay.style.opacity = '0';
             setTimeout(() => {
@@ -78,84 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 800);
         }, 5000);
     }
-
-    // ========== BG PARTICLES ==========
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-    let W, H;
-    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-    resize();
-    window.addEventListener('resize', resize);
-
-    let particles = [];
-    const particleCount = isMobile ? 30 : 70;
-    const ptclShapes = ['heart','star','diamond'];
-    const ptclColors = ['#8844c0','#b858a8','#d890b0','#a060d8','#c870b8','#e0a0c8'];
-
-    class Particle {
-        constructor() { this.reset(true); }
-        reset(init) {
-            this.x = Math.random() * W;
-            this.y = init ? Math.random() * H : H + 20;
-            this.size = 3 + Math.random() * (isMobile ? 4 : 7);
-            this.speed = 0.2 + Math.random() * 0.5;
-            this.wind = (Math.random() - 0.5) * 0.15;
-            this.alpha = 0.1 + Math.random() * 0.2;
-            this.color = ptclColors[Math.floor(Math.random() * ptclColors.length)];
-            this.shape = ptclShapes[Math.floor(Math.random() * ptclShapes.length)];
-            this.rot = Math.random() * 360;
-            this.rotSpeed = (Math.random() - 0.5) * 1;
-        }
-        update() {
-            this.y -= this.speed;
-            this.x += this.wind;
-            this.rot += this.rotSpeed;
-            if (this.y < -30) this.reset();
-        }
-        draw() {
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.rotate(this.rot * Math.PI / 180);
-            ctx.globalAlpha = this.alpha;
-            ctx.fillStyle = this.color;
-            const s = this.size;
-            if (this.shape === 'heart') {
-                ctx.beginPath();
-                ctx.moveTo(0, s * 0.5);
-                ctx.bezierCurveTo(s * 0.8, -s * 0.3, s * 0.8, s * 0.8, 0, s);
-                ctx.bezierCurveTo(-s * 0.8, s * 0.8, -s * 0.8, -s * 0.3, 0, s * 0.5);
-                ctx.fill();
-            } else if (this.shape === 'star') {
-                ctx.beginPath();
-                for (let i = 0; i < 5; i++) {
-                    const a = (i * 4 * Math.PI / 5) - Math.PI / 2;
-                    const px = Math.cos(a) * s;
-                    const py = Math.sin(a) * s;
-                    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-                }
-                ctx.closePath();
-                ctx.fill();
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(0, -s);
-                ctx.lineTo(s * 0.7, 0);
-                ctx.lineTo(0, s);
-                ctx.lineTo(-s * 0.7, 0);
-                ctx.closePath();
-                ctx.fill();
-            }
-            ctx.restore();
-        }
-    }
-
-    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
-
-    function animateParticles() {
-        ctx.clearRect(0, 0, W, H);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
 
     // ========== FLOATING SHAPES ==========
     const shapeContainer = document.getElementById('shapeContainer');
@@ -186,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (passwordInput.value.trim().toLowerCase() === PASSWORD.toLowerCase()) {
             sessionStorage.setItem('auth', 'true');
             passBox.style.transition = 'all 0.4s ease';
-            passBox.style.borderColor = 'rgba(136, 68, 192, 0.6)';
-            passBox.style.boxShadow = '0 0 60px rgba(136, 68, 192, 0.2)';
+            passBox.style.borderColor = 'var(--border-glow)';
+            passBox.style.boxShadow = '0 0 60px var(--shadow-glow)';
             passBox.style.transform = 'scale(1.03)';
             const icon = passBox.querySelector('.icon');
             if (icon) icon.textContent = '💜';
@@ -222,18 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     passwordInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            if (!isProcessingPassword && passwordInput.value.trim().length > 0) {
-                checkPassword();
-            }
-        }
+        if (e.key === 'Enter' && !isProcessingPassword && passwordInput.value.trim().length > 0) checkPassword();
     });
     passwordInput.addEventListener('input', () => {
-        if (passwordInput.value.trim().length > 0) {
-            passSlider.classList.add('active');
-        } else {
-            passSlider.classList.remove('active');
-        }
+        passSlider.classList.toggle('active', passwordInput.value.trim().length > 0);
     });
 
     // ========== PASSWORD SLIDER ==========
@@ -271,36 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (sliderTrack) {
-        // Mouse
-        sliderTrack.addEventListener('mousedown', (e) => {
-            if (isProcessingPassword) return;
-            sliderDragging = true;
-            updateSlider(getSliderPos(e.clientX));
-        });
-        document.addEventListener('mousemove', (e) => {
-            if (!sliderDragging) return;
-            updateSlider(getSliderPos(e.clientX));
-        });
-        document.addEventListener('mouseup', () => {
-            if (sliderDragging && sliderPct < 0.9) resetSlider();
-            sliderDragging = false;
-        });
-
-        // Touch
-        sliderTrack.addEventListener('touchstart', (e) => {
-            if (isProcessingPassword) return;
-            sliderDragging = true;
-            updateSlider(getSliderPos(e.touches[0].clientX));
-        }, { passive: true });
-        sliderTrack.addEventListener('touchmove', (e) => {
-            if (!sliderDragging) return;
-            e.preventDefault();
-            updateSlider(getSliderPos(e.touches[0].clientX));
-        }, { passive: false });
-        sliderTrack.addEventListener('touchend', () => {
-            if (sliderDragging && sliderPct < 0.9) resetSlider();
-            sliderDragging = false;
-        });
+        sliderTrack.addEventListener('mousedown', (e) => { if (isProcessingPassword) return; sliderDragging = true; updateSlider(getSliderPos(e.clientX)); });
+        document.addEventListener('mousemove', (e) => { if (sliderDragging) updateSlider(getSliderPos(e.clientX)); });
+        document.addEventListener('mouseup', () => { if (sliderDragging && sliderPct < 0.9) resetSlider(); sliderDragging = false; });
+        sliderTrack.addEventListener('touchstart', (e) => { if (isProcessingPassword) return; sliderDragging = true; updateSlider(getSliderPos(e.touches[0].clientX)); }, { passive: true });
+        sliderTrack.addEventListener('touchmove', (e) => { if (!sliderDragging) return; e.preventDefault(); updateSlider(getSliderPos(e.touches[0].clientX)); }, { passive: false });
+        sliderTrack.addEventListener('touchend', () => { if (sliderDragging && sliderPct < 0.9) resetSlider(); sliderDragging = false; });
         sliderTrack.addEventListener('touchcancel', () => { sliderDragging = false; resetSlider(); });
     }
 
@@ -319,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== LOVE MESSAGES ==========
     function startLoveMessages() {
         loveOverlay.classList.remove('hidden');
-
         const loveLines = [
             { text: 'بحبك يا جَنات 🤍', delay: 500 },
             { text: 'بنوتي الجميلة 💜', delay: 2500 },
@@ -329,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { text: 'كل لحظة معاكي أجمل من اللي قبلها 💗', delay: 10500 },
             { text: 'بعشقك مووت ي عمري 😘💜', delay: 12500 },
         ];
-
         const allEmojis = ['💜', '🌹', '🩷', '🥺', '🫶', '😘', '💗', '🌸', '✨', '😍'];
 
         function typeMessage(text, container, speed) {
@@ -337,15 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.textContent = '';
                 container.classList.add('show');
                 let idx = 0;
-                function type() {
-                    if (idx < text.length) {
-                        container.textContent += text[idx];
-                        idx++;
-                        setTimeout(type, speed);
-                    } else {
-                        resolve();
-                    }
-                }
+                function type() { if (idx < text.length) { container.textContent += text[idx]; idx++; setTimeout(type, speed); } else resolve(); }
                 type();
             });
         }
@@ -354,18 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return new Promise(resolve => {
                 const shuffled = [...allEmojis].sort(() => Math.random() - 0.5);
                 let shown = 0;
-                function addOne() {
-                    if (shown < count) {
-                        const span = document.createElement('span');
-                        span.textContent = shuffled[shown % shuffled.length];
-                        loveEmojiRow.appendChild(span);
-                        requestAnimationFrame(() => span.classList.add('show'));
-                        shown++;
-                        setTimeout(addOne, 300 + Math.random() * 400);
-                    } else {
-                        resolve();
-                    }
-                }
+                function addOne() { if (shown < count) { const span = document.createElement('span'); span.textContent = shuffled[shown % shuffled.length]; loveEmojiRow.appendChild(span); requestAnimationFrame(() => span.classList.add('show')); shown++; setTimeout(addOne, 300 + Math.random() * 400); } else resolve(); }
                 addOne();
             });
         }
@@ -385,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         runLoveSequence();
-
         loveNextHint.addEventListener('click', () => {
             loveOverlay.style.transition = 'opacity 0.5s ease';
             loveOverlay.style.opacity = '0';
@@ -401,17 +266,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true });
     }
 
-    // ========== FLOATING ROSES ==========
-    function startFloatingRoses() {
-        const emojis = ['🌹', '💜', '🌸', '🩷'];
-        for (let i = 0; i < (isMobile ? 6 : 12); i++) {
+    // ========== FLOATING ROSES & HEARTS ==========
+    function startFloatingItems() {
+        const emojis = ['🌹', '💜', '🌸', '🩷', '💗', '🌹', '🫶', '💕'];
+        for (let i = 0; i < (isMobile ? 8 : 16); i++) {
             const el = document.createElement('div');
             el.className = 'rose-float';
             el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
             el.style.left = Math.random() * 100 + '%';
             el.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
-            el.style.animationDuration = (8 + Math.random() * 12) + 's';
-            el.style.animationDelay = (Math.random() * 10) + 's';
+            el.style.animationDuration = (12 + Math.random() * 14) + 's';
+            el.style.animationDelay = (Math.random() * 15) + 's';
             document.body.appendChild(el);
         }
     }
@@ -421,15 +286,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const heroContent = hero.querySelector('.hero-new-content');
         if (heroContent) heroContent.style.animation = 'heroEntrance 0.8s ease forwards';
         setTimeout(() => typewriterEffect(), 400);
-        startFloatingRoses();
+        startFloatingItems();
         setTimeout(() => {
             nextHint.style.display = 'flex';
             nextHint.style.animation = 'fadeInUp 0.6s ease forwards';
-            setTimeout(() => {
-                nextHint.style.animation = 'fadeInUp 0.6s ease forwards, float 2s ease-in-out 0.6s infinite';
-            }, 600);
+            setTimeout(() => { nextHint.style.animation = 'fadeInUp 0.6s ease forwards, float 2s ease-in-out 0.6s infinite'; }, 600);
         }, 2000);
-        startConfetti();
+        startHeartsConfetti();
     }
 
     function typewriterEffect() {
@@ -451,49 +314,49 @@ document.addEventListener('DOMContentLoaded', () => {
     styleSheet.textContent = `@keyframes charFade { from{opacity:0;transform:translateY(10px) scale(0.8)} to{opacity:1;transform:translateY(0) scale(1)} }`;
     document.head.appendChild(styleSheet);
 
-    // ========== CONFETTI ==========
-    function startConfetti() {
+    // ========== HEARTS CONFETTI (بدل حاجات عيد الميلاد) ==========
+    function startHeartsConfetti() {
         const cCanvas = document.createElement('canvas');
         cCanvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:998';
         document.body.appendChild(cCanvas);
         const cCtx = cCanvas.getContext('2d');
         let cW, cH, cPieces = [];
-        const cCount = isMobile ? 30 : 50;
+        const cCount = isMobile ? 20 : 35;
 
         function cResize() { cW = cCanvas.width = window.innerWidth; cH = cCanvas.height = window.innerHeight; }
         cResize();
         window.addEventListener('resize', cResize);
+
+        const heartEmojis = ['💜', '🩷', '💗', '💕', '🫶', '🌹', '🌸'];
 
         class C {
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * cW;
                 this.y = Math.random() * cH - cH;
-                this.w = 3 + Math.random() * 4;
-                this.h = 2 + Math.random() * 3;
-                this.c = ['#a060d8','#8844c0','#d890b0','#b870a8','#c870b8','#b858a8','#e0a0c8'][Math.floor(Math.random()*7)];
-                this.s = 1 + Math.random() * 1.5;
+                this.size = 10 + Math.random() * 14;
+                this.c = ['#e060a0','#a050d0','#e890b8','#d460a0','#f0b0c8','#c870b0'][Math.floor(Math.random()*6)];
+                this.s = 0.5 + Math.random() * 1;
                 this.wind = (Math.random() - 0.5) * 0.3;
                 this.r = Math.random() * 360;
-                this.rs = (Math.random() - 0.5) * 3;
+                this.rs = (Math.random() - 0.5) * 2;
+                this.emoji = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
             }
             u() { this.y += this.s; this.x += this.wind; this.r += this.rs; if (this.y > cH + 20) this.reset(); }
             d() {
                 cCtx.save();
                 cCtx.translate(this.x, this.y);
                 cCtx.rotate(this.r * Math.PI / 180);
-                cCtx.fillStyle = this.c;
-                cCtx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+                cCtx.font = this.size + 'px sans-serif';
+                cCtx.textAlign = 'center';
+                cCtx.textBaseline = 'middle';
+                cCtx.fillText(this.emoji, 0, 0);
                 cCtx.restore();
             }
         }
 
         for (let i = 0; i < cCount; i++) cPieces.push(new C());
-        (function loop() {
-            cCtx.clearRect(0, 0, cW, cH);
-            cPieces.forEach(p => { p.u(); p.d(); });
-            requestAnimationFrame(loop);
-        })();
+        (function loop() { cCtx.clearRect(0, 0, cW, cH); cPieces.forEach(p => { p.u(); p.d(); }); requestAnimationFrame(loop); })();
     }
 
     // ========== CARDS OBSERVER ==========
@@ -501,27 +364,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cardsRevealed) return;
         cardsRevealed = true;
         cardsSection.classList.add('visible');
-        setTimeout(() => {
-            cards.forEach((card, i) => { setTimeout(() => card.classList.add('visible'), i * 200); });
-        }, 300);
+        setTimeout(() => { cards.forEach((card, i) => { setTimeout(() => card.classList.add('visible'), i * 200); }); }, 300);
     }
 
     function startCardsObserver() {
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && !cardsRevealed) { revealCards(); observer.unobserve(cardsSection); }
-        }, { threshold: 0.05 });
+        const observer = new IntersectionObserver((entries) => { if (entries[0].isIntersecting && !cardsRevealed) { revealCards(); observer.unobserve(cardsSection); } }, { threshold: 0.05 });
         setTimeout(() => observer.observe(cardsSection), 500);
-        const scrollCheck = () => {
-            if (cardsRevealed) { window.removeEventListener('scroll', scrollCheck); return; }
-            if (hero.getBoundingClientRect().bottom < window.innerHeight * 0.3) revealCards();
-        };
+        const scrollCheck = () => { if (cardsRevealed) { window.removeEventListener('scroll', scrollCheck); return; } if (hero.getBoundingClientRect().bottom < window.innerHeight * 0.3) revealCards(); };
         window.addEventListener('scroll', scrollCheck, { passive: true });
     }
 
-    nextHint.addEventListener('click', () => {
-        cardsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        if (!cardsRevealed) revealCards();
-    });
+    nextHint.addEventListener('click', () => { cardsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); if (!cardsRevealed) revealCards(); });
 
     // ========== CARDS FLIP ==========
     const cardClicked = new Set();
@@ -530,17 +383,12 @@ document.addEventListener('DOMContentLoaded', () => {
     cards.forEach(card => {
         card.addEventListener('click', function(e) {
             const index = parseInt(this.dataset.index);
-            if (this.classList.contains('flipped')) {
-                if (cardClicked.has(index)) showFunnyModal(index);
-                return;
-            }
+            if (this.classList.contains('flipped')) { if (cardClicked.has(index)) showFunnyModal(index); return; }
             if (index !== nextExpectedIndex) { showOrderWarning(); return; }
-
             this.classList.add('flipped');
             flippedCount++;
             nextExpectedIndex++;
             updateProgress();
-
             const rect = this.getBoundingClientRect();
             const cx = rect.left + rect.width / 2;
             const cy = rect.top + rect.height / 2;
@@ -555,7 +403,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 requestAnimationFrame(() => { s.style.transform = `translate(${Math.cos(a)*d}px, ${Math.sin(a)*d}px) scale(0)`; s.style.opacity = '0'; });
                 setTimeout(() => s.remove(), 700);
             }
-
             cardClicked.add(index);
             showModal(index);
             if (flippedCount === cards.length) setTimeout(onAllCardsFlipped, 1000);
@@ -569,11 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
         m.classList.remove('hidden');
     }
 
-    function updateProgress() {
-        const pct = (flippedCount / cards.length) * 100;
-        progressFill.style.setProperty('--pct', pct + '%');
-        progressText.textContent = `${flippedCount} / ${cards.length}`;
-    }
+    function updateProgress() { const pct = (flippedCount / cards.length) * 100; progressFill.style.setProperty('--pct', pct + '%'); progressText.textContent = `${flippedCount} / ${cards.length}`; }
 
     // ========== ALL FLIPPED ==========
     function onAllCardsFlipped() {
@@ -581,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cardsComplete.style.animation = 'scaleIn 0.5s ease forwards';
         for (let i = 0; i < (isMobile ? 15 : 30); i++) {
             const e = document.createElement('div');
-            e.textContent = ['🎉','🎊','✨','💫','⭐'][Math.floor(Math.random()*5)];
+            e.textContent = ['💜','🩷','💗','💕','🌹'][Math.floor(Math.random()*5)];
             e.style.cssText = `position:fixed;font-size:1.2rem;pointer-events:none;z-index:999;left:${40 + Math.random()*20}%;top:40%;transition:all 1.2s ease;`;
             document.body.appendChild(e);
             requestAnimationFrame(() => { e.style.transform = `translate(${(Math.random()-0.5)*300}px, ${-150 - Math.random()*200}px) scale(0)`; e.style.opacity = '0'; });
@@ -592,27 +435,15 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 cardsSection.style.transition = 'all 0.5s ease';
                 cardsSection.style.opacity = '0';
-                setTimeout(() => {
-                    cardsSection.classList.remove('visible');
-                    cardsSection.classList.add('cards-section-hidden');
-                    cardsSection.style.opacity = '';
-                    showCTA();
-                }, 500);
+                setTimeout(() => { cardsSection.classList.remove('visible'); cardsSection.classList.add('cards-section-hidden'); cardsSection.style.opacity = ''; showCTA(); }, 500);
             }, cards.length * 80 + 400);
         }, 1500);
     }
 
     // ========== CTA ==========
-    function showCTA() {
-        ctaSection.classList.remove('hidden');
-        setTimeout(() => { ctaSection.classList.add('visible'); ctaSection.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
-    }
+    function showCTA() { ctaSection.classList.remove('hidden'); setTimeout(() => { ctaSection.classList.add('visible'); ctaSection.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100); }
 
-    ctaBtn.addEventListener('click', () => {
-        ctaBtn.textContent = 'يلا بينا 😈';
-        ctaBtn.style.transform = 'scale(0.9)';
-        setTimeout(() => { window.location.href = 'page2.html'; }, 400);
-    });
+    ctaBtn.addEventListener('click', () => { ctaBtn.textContent = 'يلا بينا 😈'; ctaBtn.style.transform = 'scale(0.9)'; setTimeout(() => { window.location.href = 'page2.html'; }, 400); });
 
     // ========== MODAL ==========
     const photoTitles = ['صورتها الأولى 💗', 'صورتها التانية 🌷', 'صورتها التالتة 💜', 'صورتها الرابعة 🩷'];

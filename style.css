@@ -6,41 +6,46 @@
 
 :root {
     --font-main: 'Cairo', 'Segoe UI', sans-serif;
-    --accent-purple: #8844c0;
-    --accent-mauve: #b870a8;
-    --accent-pink: #d460a0;
+    --accent-purple: #a050d0;
+    --accent-mauve: #c870b0;
+    --accent-pink: #e060a0;
     --accent-rose: #e890b8;
-    --accent-light: #f5e4f0;
+    --accent-light: #fef0f5;
+    --accent-dark: #1a0510;
 }
 
 [data-theme="dark"] {
-    --bg-primary: #080312;
-    --bg-secondary: #10081a;
-    --bg-card: #0e0518;
-    --text-primary: #f0e8f5;
-    --text-secondary: #b898c8;
-    --border-glow: rgba(136, 68, 192, 0.3);
-    --shadow-glow: rgba(136, 68, 192, 0.2);
-    --overlay-bg: rgba(3, 1, 5, 0.92);
-    --pass-bg: rgba(16, 8, 26, 0.85);
+    --bg-primary: #150810;
+    --bg-secondary: #1e0c16;
+    --bg-card: #1a0a14;
+    --text-primary: #fef0f5;
+    --text-secondary: #d4a0b8;
+    --border-glow: rgba(224, 96, 160, 0.25);
+    --shadow-glow: rgba(224, 96, 160, 0.15);
+    --overlay-bg: rgba(15, 5, 10, 0.92);
+    --pass-bg: rgba(26, 10, 20, 0.85);
     --btn-text: #fff;
-    --hero-bg: radial-gradient(ellipse at 50% 0%, #12051e 0%, #080312 60%);
-    --overlay-solid: radial-gradient(ellipse at center, #0e0318 0%, #030105 100%);
+    --hero-bg: radial-gradient(ellipse at 50% 0%, #1e0c16 0%, #150810 60%);
+    --overlay-solid: radial-gradient(ellipse at center, #1a0a14 0%, #0f0510 100%);
+    --theme-btn: rgba(255,255,255,0.08);
+    --theme-border: rgba(255,255,255,0.12);
 }
 
 [data-theme="light"] {
-    --bg-primary: #faf0f5;
-    --bg-secondary: #f5e4f0;
-    --bg-card: #fff5fa;
-    --text-primary: #2a1020;
-    --text-secondary: #884466;
-    --border-glow: rgba(136, 68, 192, 0.15);
-    --shadow-glow: rgba(136, 68, 192, 0.1);
-    --overlay-bg: rgba(250, 240, 245, 0.95);
-    --pass-bg: rgba(255, 245, 250, 0.9);
+    --bg-primary: #fef0f5;
+    --bg-secondary: #ffe8f0;
+    --bg-card: #fff5f8;
+    --text-primary: #1a0510;
+    --text-secondary: #a05070;
+    --border-glow: rgba(224, 96, 160, 0.15);
+    --shadow-glow: rgba(224, 96, 160, 0.08);
+    --overlay-bg: rgba(254, 240, 245, 0.95);
+    --pass-bg: rgba(255, 245, 248, 0.9);
     --btn-text: #fff;
-    --hero-bg: radial-gradient(ellipse at 50% 0%, #f5e4f0 0%, #faf0f5 60%);
-    --overlay-solid: radial-gradient(ellipse at center, #f5e4f0 0%, #faf0f5 100%);
+    --hero-bg: radial-gradient(ellipse at 50% 0%, #ffe8f0 0%, #fef0f5 60%);
+    --overlay-solid: radial-gradient(ellipse at center, #fff5f8 0%, #fef0f5 100%);
+    --theme-btn: rgba(160, 80, 208, 0.08);
+    --theme-border: rgba(160, 80, 208, 0.15);
 }
 
 html { scroll-behavior: smooth; }
@@ -55,19 +60,9 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
-::selection { background: var(--accent-purple); color: #fff; }
+::selection { background: var(--accent-pink); color: #fff; }
 
 .hidden { display: none !important; }
-
-/* ========== BG CANVAS ========== */
-#bgCanvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-}
 
 /* ========== OVERLAY ========== */
 .overlay {
@@ -83,18 +78,31 @@ body {
 
 /* ========== THEME TOGGLE ========== */
 .theme-toggle {
-    position: fixed; top: 1rem; left: 1rem; z-index: 9999;
-    width: 44px; height: 44px; border-radius: 50%;
-    border: 1px solid var(--border-glow);
-    background: var(--bg-secondary);
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.3rem;
+    width: auto; height: 38px;
+    padding: 0 0.8rem;
+    border-radius: 20px;
+    border: 1px solid var(--theme-border, var(--border-glow));
+    background: var(--theme-btn, var(--bg-secondary));
     color: var(--text-primary);
-    font-size: 1.3rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s; backdrop-filter: blur(8px);
-    box-shadow: 0 0 15px var(--shadow-glow);
+    font-size: 0.9rem; cursor: pointer; font-family: var(--font-main);
+    transition: all 0.3s;
+    backdrop-filter: blur(8px);
+    animation: themeBtnPulse 3s ease-in-out infinite;
     -webkit-tap-highlight-color: transparent; user-select: none;
+    margin: 0.8rem 1rem;
 }
-.theme-toggle:active { transform: scale(0.9); }
+.theme-toggle:active { transform: scale(0.92); }
+.theme-toggle .icon { font-size: 1.2rem; display: inline-block; }
+.theme-toggle .label { font-size: 0.75rem; font-weight: 600; }
+[data-theme="dark"] .theme-toggle .label:after { content: 'فاتح'; }
+[data-theme="light"] .theme-toggle .label:after { content: 'غامق'; }
+
+@keyframes themeBtnPulse {
+    0%,100% { box-shadow: 0 0 8px var(--shadow-glow); }
+    50% { box-shadow: 0 0 20px var(--shadow-glow), 0 0 40px rgba(224,96,160,0.08); }
+}
 
 /* ========== INTRO ANIMATION ========== */
 .intro-overlay {
@@ -119,7 +127,7 @@ body {
 .intro-name {
     font-size: clamp(3rem, 10vw, 6rem);
     font-weight: 900;
-    background: linear-gradient(135deg, #b858a8, #8844c0, #d890b0, #b858a8);
+    background: linear-gradient(135deg, #d460a0, #a050d0, #e890b8, #d460a0);
     background-size: 300% 300%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -135,7 +143,7 @@ body {
     font-size: clamp(2rem, 6vw, 4rem);
     font-weight: 300;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #d890b0, #8844c0, #b858a8, #d890b0);
+    background: linear-gradient(135deg, #e890b8, #a050d0, #d460a0, #e890b8);
     background-size: 300% 300%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -149,9 +157,7 @@ body {
 .intro-name-en.show { animation: nameEnAppear 1s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 .intro-name-en.fade { animation: nameFade 0.8s ease forwards; }
 
-.intro-sparkles {
-    display: none;
-}
+
 
 @keyframes nameAppear {
     0% { opacity: 0; transform: scale(0.5) rotate(-5deg); }
@@ -353,7 +359,7 @@ body {
     position: absolute;
     inset: 0;
     width: 0%;
-    background: linear-gradient(90deg, #8844c0, #b858a8);
+    background: linear-gradient(90deg, #a050d0, #d460a0);
     border-radius: 24px;
     transition: width 0.1s linear;
 }
@@ -745,7 +751,7 @@ body {
     font-family: var(--font-main);
     border: none;
     border-radius: 50px;
-    background: linear-gradient(135deg, #8844c0, #b858a8);
+    background: linear-gradient(135deg, #a050d0, #d460a0);
     color: #fff;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -831,22 +837,6 @@ body {
     transform: scale(0.9);
 }
 
-/* ========== FLOATING EMOJIS ========== */
-.floating-emoji {
-    position: fixed;
-    font-size: 1.5rem;
-    pointer-events: none;
-    z-index: 998;
-    animation: emojiFloat 8s ease-in-out infinite;
-}
-
-@keyframes emojiFloat {
-    0%, 100% { transform: translateY(0) scale(1); opacity: 0.2; }
-    25% { transform: translateY(-20px) scale(1.1); opacity: 0.5; }
-    50% { transform: translateY(-10px) scale(0.95); opacity: 0.35; }
-    75% { transform: translateY(-25px) scale(1.05); opacity: 0.4; }
-}
-
 /* ========== KEYFRAMES ========== */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -894,15 +884,17 @@ body {
     to { opacity: 0; }
 }
 
-/* ========== FLOATING ROSES ========== */
+/* ========== FLOATING ROSES & HEARTS ========== */
 .rose-float {
     position: fixed;
     font-size: 1.8rem;
     pointer-events: none;
     z-index: 999;
-    animation: roseFloat ease-in-out infinite;
+    animation: roseFloat linear infinite;
     opacity: 0.6;
 }
+.rose-float:nth-child(odd) { animation-duration: 12s; }
+.rose-float:nth-child(even) { animation-duration: 18s; font-size: 1.4rem; }
 
 @keyframes roseFloat {
     0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
@@ -983,7 +975,8 @@ body {
     .section-title { font-size: 1.1rem; }
     .cards-section-new { padding: 1.5rem 0.8rem 2rem; }
     .cards-section-new .title { font-size: clamp(1rem, 3.5vw, 1.2rem); }
-    .theme-toggle { top: 0.5rem; left: 0.5rem; width: 38px; height: 38px; font-size: 1.1rem; }
+    .theme-toggle { margin: 0.5rem; padding: 0 0.6rem; height: 34px; font-size: 0.8rem; }
+    .theme-toggle .icon { font-size: 1rem; }
     .cta-new button { padding: 1rem 1.8rem; font-size: 1rem; }
     .sub-title-new { font-size: 0.85rem; }
     .pass-box-new p { font-size: 0.8rem; }
