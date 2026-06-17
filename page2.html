@@ -31,7 +31,7 @@
 
         .page2-bg-orb:nth-child(1) {
             width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(160,96,208,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(136,68,192,0.1) 0%, transparent 70%);
             top: -150px; right: -150px;
             animation: orbFloat 8s ease-in-out infinite;
         }
@@ -339,6 +339,34 @@
         @keyframes timerPulse {
             0%, 100% { box-shadow: 0 0 20px rgba(184,88,168,0.3); transform: scale(1); }
             50% { box-shadow: 0 0 40px rgba(184,88,168,0.4), 0 0 60px rgba(136,68,192,0.2); transform: scale(1.05); }
+        }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 480px) {
+            .page2-wrap { padding: 1rem; }
+            .p2-card { max-width: 100%; }
+            .heart-burst { font-size: 3.5rem; }
+            .p2-title { font-size: clamp(1.3rem, 5vw, 1.8rem); }
+            .p2-sub { font-size: 0.9rem; }
+            .icon-row span { font-size: 1.6rem; }
+            .icon-row { gap: 0.4rem; }
+            .p2-message-box { padding: 1.2rem 1rem; }
+            .p2-message-box p { font-size: 1rem; line-height: 1.8; }
+            .back-btn { padding: 0.8rem 1.5rem; font-size: 1rem; }
+            .p2-dialog-content { padding: 1.5rem 1rem; }
+            .p2-dialog-title { font-size: 1.2rem; }
+            .p2-dialog-sub { font-size: 0.9rem; }
+            .p2-dialog-buttons { flex-direction: column; gap: 0.5rem; }
+            .p2-dialog-btn { min-width: auto; width: 100%; padding: 0.7rem 1rem; font-size: 1rem; }
+            .p2-timer { width: 60px; height: 60px; font-size: 1.8rem; }
+            .theme-toggle { top: 0.5rem; left: 0.5rem; width: 38px; height: 38px; font-size: 1.1rem; }
+        }
+        @media (max-width: 360px) {
+            .page2-wrap { padding: 0.8rem; }
+            .p2-title { font-size: 1.2rem; }
+            .p2-message-box p { font-size: 0.9rem; }
+            .icon-row span { font-size: 1.3rem; }
+            .heart-burst { font-size: 3rem; }
         }
     </style>
 </head>

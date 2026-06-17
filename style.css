@@ -92,6 +92,7 @@ body {
     display: flex; align-items: center; justify-content: center;
     transition: all 0.3s; backdrop-filter: blur(8px);
     box-shadow: 0 0 15px var(--shadow-glow);
+    -webkit-tap-highlight-color: transparent; user-select: none;
 }
 .theme-toggle:active { transform: scale(0.9); }
 
@@ -894,19 +895,51 @@ body {
 }
 
 /* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+    .hero { min-height: 90vh; }
+    .hero-content, .hero-new-content { padding: 1rem; }
+    .balloons { gap: 0.5rem; }
+    .balloon { font-size: 2rem; }
+    .love-text { font-size: clamp(1.2rem, 4vw, 1.8rem); line-height: 1.8; }
+    .love-emoji-row span { font-size: 1.6rem; }
+    .next-hint span { font-size: 0.8rem; }
+}
+
 @media (max-width: 480px) {
+    .intro-name { font-size: clamp(2.5rem, 12vw, 4rem); }
+    .intro-name-en { font-size: clamp(1.5rem, 8vw, 2.5rem); letter-spacing: 4px; }
     .pass-box-new { padding: 2rem 1.2rem; }
     .pass-box-new .icon { font-size: 2.2rem; }
     .pass-box-new h1 { font-size: 1.3rem; }
-    .pass-input-wrap input { padding: 0.6rem 0.8rem; font-size: 0.9rem; }
-    .pass-input-wrap button { padding: 0.6rem 1rem; font-size: 1rem; }
+    .pass-input-wrap { flex-direction: column; gap: 0.4rem; }
+    .pass-input-wrap input { padding: 0.6rem 0.8rem; font-size: 0.9rem; text-align: center; }
+    .pass-input-wrap button { padding: 0.7rem; font-size: 1rem; width: 100%; }
     .card { height: 160px; }
-    .modal-content { width: 92vw; }
+    .cards-grid-2col .card { height: 140px; }
+    .card-front h3 { font-size: 0.85rem; }
+    .card-front-icon { font-size: 1.6rem; }
+    .card-num { font-size: 1.2rem; }
+    .modal-content { width: 92vw; max-width: 300px; }
+    .modal-photo-frame { aspect-ratio: 1; }
+    .modal-close { top: 0.5rem; left: 0.5rem; width: 36px; height: 36px; font-size: 1.5rem; }
     .progress-fill { width: 120px; }
+    .progress-text { font-size: 0.75rem; }
+    .section-title { font-size: 1.1rem; }
+    .cards-section-new { padding: 1.5rem 0.8rem 2rem; }
+    .cards-section-new .title { font-size: clamp(1rem, 3.5vw, 1.2rem); }
+    .theme-toggle { top: 0.5rem; left: 0.5rem; width: 38px; height: 38px; font-size: 1.1rem; }
+    .cta-new button { padding: 1rem 1.8rem; font-size: 1rem; }
+    .sub-title-new { font-size: 0.85rem; }
+    .pass-box-new p { font-size: 0.8rem; }
 }
 
 @media (max-width: 360px) {
     .card { height: 140px; }
-    .card-front-icon { font-size: 1.6rem; }
-    .card-front h3 { font-size: 0.9rem; }
+    .cards-grid-2col .card { height: 120px; }
+    .card-front-icon { font-size: 1.4rem; }
+    .card-front h3 { font-size: 0.8rem; }
+    .card-num { font-size: 1rem; }
+    .love-text { font-size: 1.1rem; }
+    .pass-box-new { padding: 1.5rem 0.8rem; }
+    .cta-new button { padding: 0.9rem 1.5rem; font-size: 0.9rem; }
 }
