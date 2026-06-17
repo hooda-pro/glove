@@ -17,15 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressFill = document.querySelector('.progress-fill');
     const progressText = document.getElementById('progressText');
     const hero = document.getElementById('hero');
-    const passBox = document.querySelector('.password-box');
-    const mainTitle = document.querySelector('.main-title');
+    const passBox = document.querySelector('.pass-box-new');
+    const mainTitle = document.querySelector('.main-title-new');
     const balloons = document.querySelectorAll('.balloon');
 
     const isMobile = window.innerWidth <= 768;
 
-    // ========== BALLOON DELAYS (JS fix for mobile) ==========
+    // ========== ROSE DELAYS ==========
     balloons.forEach((b, i) => {
-        b.style.animationDelay = `${i * 0.15}s, ${0.8 + i * 0.15}s`;
+        b.style.animationDelay = `${i * 0.15}s`;
     });
 
     // ========== BG PARTICLES (fewer on mobile) ==========
@@ -96,10 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionStorage.setItem('auth', 'true');
 
             passBox.style.transition = 'all 0.4s ease';
-            passBox.style.borderColor = 'rgba(46, 204, 113, 0.6)';
-            passBox.style.boxShadow = '0 0 60px rgba(46, 204, 113, 0.2)';
+            passBox.style.borderColor = 'rgba(160, 96, 208, 0.6)';
+            passBox.style.boxShadow = '0 0 60px rgba(160, 96, 208, 0.2)';
             passBox.style.transform = 'scale(1.03)';
-            passBox.querySelector('.pass-icon').textContent = '✅';
+            passBox.querySelector('.icon').textContent = '✅';
 
             setTimeout(() => {
                 overlay.style.transition = 'opacity 0.5s ease';
@@ -122,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             void passBox.offsetHeight;
             passBox.style.animation = 'shake 0.4s ease';
             passBox.style.borderColor = 'rgba(231, 76, 60, 0.4)';
+            passwordInput.style.borderColor = '';
             setTimeout(() => {
                 errorMsg.classList.add('hidden');
                 passBox.style.animation = '';
@@ -144,11 +145,27 @@ document.addEventListener('DOMContentLoaded', () => {
         startCardsObserver();
     }
 
+    // ========== FLOATING ROSES ==========
+    function startFloatingRoses() {
+        const emojis = ['🌹', '💜', '🌸', '🩷'];
+        for (let i = 0; i < (isMobile ? 6 : 12); i++) {
+            const el = document.createElement('div');
+            el.className = 'rose-float';
+            el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            el.style.left = Math.random() * 100 + '%';
+            el.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+            el.style.animationDuration = (8 + Math.random() * 12) + 's';
+            el.style.animationDelay = (Math.random() * 10) + 's';
+            document.body.appendChild(el);
+        }
+    }
+
     // ========== HERO ==========
     function startHeroAnimation() {
-        const heroContent = hero.querySelector('.hero-content');
+        const heroContent = hero.querySelector('.hero-new-content');
         heroContent.style.animation = 'heroEntrance 0.8s ease forwards';
         setTimeout(() => typewriterEffect(), 400);
+        startFloatingRoses();
         setTimeout(() => {
             nextHint.style.display = 'flex';
             nextHint.style.animation = 'fadeInUp 0.6s ease forwards';
@@ -167,10 +184,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const span = document.createElement('span');
             span.className = 'char';
             span.textContent = char;
-            span.style.animationDelay = i * 0.035 + 's';
+            span.style.animationDelay = i * 0.03 + 's';
+            span.style.display = 'inline-block';
+            span.style.animation = 'charFade 0.3s ease forwards';
             mainTitle.appendChild(span);
         });
     }
+
+    // Add charFade animation
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `@keyframes charFade { from{opacity:0;transform:translateY(10px) scale(0.8)} to{opacity:1;transform:translateY(0) scale(1)} }`;
+    document.head.appendChild(styleSheet);
 
     // ========== CONFETTI ==========
     function startConfetti() {

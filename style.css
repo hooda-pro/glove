@@ -5,17 +5,19 @@
 }
 
 :root {
-    --bg-primary: #0a0812;
-    --bg-secondary: #12101a;
-    --text-primary: #f5eaf5;
-    --text-secondary: #c0a8c0;
-    --accent-gold: #c884b0;
-    --accent-rose: #b890d0;
+    --bg-primary: #0a0512;
+    --bg-secondary: #120a1a;
+    --text-primary: #f0e8f5;
+    --text-secondary: #c8a8d0;
+    --accent-gold: #c870b0;
+    --accent-rose: #a060d0;
     --accent-teal: #e8a0c0;
-    --border-glow: rgba(200, 132, 176, 0.3);
-    --shadow-gold: rgba(200, 132, 176, 0.2);
+    --border-glow: rgba(160, 96, 208, 0.3);
+    --shadow-gold: rgba(160, 96, 208, 0.2);
     --font-main: 'Cairo', 'Segoe UI', sans-serif;
-    --accent-purple: #a070c0;
+    --accent-purple: #a060d0;
+    --accent-mauve: #c880b0;
+    --accent-rosegold: #e0a0b8;
 }
 
 html { scroll-behavior: smooth; }
@@ -53,7 +55,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(ellipse at center, #180d20 0%, #050508 100%);
+    background: radial-gradient(ellipse at center, #14051e 0%, #050308 100%);
 }
 
 /* ========== BUBBLES ========== */
@@ -71,8 +73,8 @@ body {
     width: calc(var(--s, 5) * 14px);
     height: calc(var(--s, 5) * 14px);
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(200, 132, 176, 0.18), rgba(200, 132, 176, 0.03));
-    border: 1px solid rgba(200, 132, 176, 0.1);
+    background: radial-gradient(circle at 30% 30%, rgba(160, 96, 208, 0.2), rgba(160, 96, 208, 0.03));
+    border: 1px solid rgba(160, 96, 208, 0.1);
     animation: bubbleRise 10s ease-in-out infinite;
     animation-delay: var(--d, 0s);
 }
@@ -199,7 +201,7 @@ body {
 .hero-bg {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, #1a1028 0%, #0a0812 60%);
+    background: radial-gradient(ellipse at 50% 0%, #1a0a28 0%, #0a0512 60%);
     z-index: 0;
 }
 
@@ -669,6 +671,60 @@ body {
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
+}
+
+/* ========== FLOATING ROSES ========== */
+.rose-float {
+    position: fixed;
+    font-size: 1.8rem;
+    pointer-events: none;
+    z-index: 999;
+    animation: roseFloat ease-in-out infinite;
+    opacity: 0.6;
+}
+
+@keyframes roseFloat {
+    0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-20vh) rotate(720deg) scale(1); opacity: 0; }
+}
+
+/* ========== SPARKLE BURST ========== */
+.sparkle-burst {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    font-size: 1rem;
+    animation: sparkleBurst 0.8s ease forwards;
+}
+
+@keyframes sparkleBurst {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0) translateY(-60px); opacity: 0; }
+}
+
+/* ========== GLOW PULSE ========== */
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(160,96,208,0.2); }
+    50% { box-shadow: 0 0 40px rgba(160,96,208,0.4), 0 0 60px rgba(160,96,208,0.1); }
+}
+
+/* ========== ROSE PETAL ========== */
+.petal {
+    position: fixed;
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 999;
+    animation: petalFall linear infinite;
+    opacity: 0;
+}
+
+@keyframes petalFall {
+    0% { transform: translateY(-20px) rotate(0deg) translateX(0); opacity: 0; }
+    10% { opacity: 0.5; }
+    50% { transform: translateY(50vh) rotate(360deg) translateX(30px); opacity: 0.3; }
+    100% { transform: translateY(100vh) rotate(720deg) translateX(-20px); opacity: 0; }
 }
 
 /* ========== RESPONSIVE ========== */

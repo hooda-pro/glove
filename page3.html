@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background: radial-gradient(ellipse at center, #180d20 0%, #0a0812 70%);
+            background: radial-gradient(ellipse at center, #1a0a28 0%, #0a0512 70%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -251,6 +251,18 @@
 
     <script>
         if (!sessionStorage.getItem('auth')) { window.location.href = 'index.html'; }
+
+        // ===== FLOATING ROSES =====
+        const roseEmojis3 = ['🌹', '💜', '🌸'];
+        for (let i = 0; i < 8; i++) {
+            const r = document.createElement('div'); r.className = 'rose-float';
+            r.textContent = roseEmojis3[Math.floor(Math.random() * roseEmojis3.length)];
+            r.style.left = Math.random() * 100 + '%';
+            r.style.fontSize = (1 + Math.random() * 1.2) + 'rem';
+            r.style.animationDuration = (8 + Math.random() * 10) + 's';
+            r.style.animationDelay = (Math.random() * 10) + 's';
+            document.body.appendChild(r);
+        }
 
         // ===== STARS =====
         const starsContainer = document.getElementById('p3Stars');

@@ -12,7 +12,7 @@
         html, body { width: 100%; height: 100%; overflow: hidden; touch-action: none; }
         body {
             font-family: 'Cairo', sans-serif;
-            background: #0a0812;
+            background: #0a0512;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -36,7 +36,7 @@
         }
         .s2-hud > div { color: var(--text-primary); font-size: 1rem; font-weight: 700; }
         .s2-hud .label { color: var(--text-secondary); font-size: 0.8rem; }
-        .s2-hud .value { color: var(--accent-gold); font-size: 1.3rem; }
+        .s2-hud .value { color: #c870b0; font-size: 1.3rem; }
         .s2-score { text-align: center; }
         .s2-best { text-align: left; direction: ltr; }
 
@@ -53,9 +53,9 @@
         .s2-ov-btn {
             padding: 0.9rem 2.5rem; font-size: 1.2rem; font-weight: 700;
             font-family: var(--font-main); border: none; border-radius: 14px;
-            background: linear-gradient(135deg, var(--accent-gold), #f0b8c8);
-            color: #0a0a0f; cursor: pointer; transition: all 0.3s;
-            box-shadow: 0 0 30px var(--shadow-gold);
+            background: linear-gradient(135deg, #a060d0, #c870b0);
+            color: #fff; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(160,96,208,0.3);
         }
         .s2-ov-btn:active { transform: scale(0.92); }
         .s2-timer-num { font-size: 2.5rem; font-weight: 900; color: var(--accent-gold); margin: 0.5rem 0; }
@@ -85,13 +85,21 @@
             </div>
         </div>
 
+        <!-- D-Pad controls -->
+        <div class="s2-dpad" id="mobileDpad">
+            <button class="s2-dpad-btn s2-dpad-up" data-dir="up">⬆️</button>
+            <button class="s2-dpad-btn s2-dpad-left" data-dir="left">⬅️</button>
+            <button class="s2-dpad-btn s2-dpad-right" data-dir="right">➡️</button>
+            <button class="s2-dpad-btn s2-dpad-down" data-dir="down">⬇️</button>
+        </div>
+
         <div class="s2-hint" id="touchHint">👆 اسحبي اصبعك عشان تتحركي</div>
 
     <div class="s2-overlay" id="startOverlay">
         <div class="s2-ov-icon">🎮</div>
         <h2 class="s2-ov-title">عشان تروح للمرحلة 2</h2>
-        <p class="s2-ov-sub">وريني شطارتيج في اللعبة دي 👀</p>
-        <button class="s2-ov-btn" id="startBtn">ابدأ 🏃</button>
+        <p class="s2-ov-sub">وريني شطارتيج في اللعبة دي 👀<br>🌹💜🌹</p>
+        <button class="s2-ov-btn" id="startBtn">ابدأي 🏃💜</button>
     </div>
 
     <div class="s2-overlay hidden" id="resultOverlay">
@@ -247,18 +255,25 @@
 
             let dx = 0, dy = 0;
 
-            if (isMobile) {
-                dx = touchMoveX;
-                dy = touchMoveY;
-                const mag = Math.sqrt(dx*dx + dy*dy);
-                if (mag > 1) { dx /= mag; dy /= mag; }
-                touchMoveX *= 0.8;
-                touchMoveY *= 0.8;
-            } else {
-                if (keys['ArrowUp'] || keys['w'] || keys['W']) dy = -1;
-                if (keys['ArrowDown'] || keys['s'] || keys['S']) dy = 1;
-                if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -1;
-                if (keys['ArrowRight'] || keys['d'] || keys['D']) dx = 1;
+            if (dpadDirs.up) dy = -1;
+            if (dpadDirs.down) dy = 1;
+            if (dpadDirs.left) dx = -1;
+            if (dpadDirs.right) dx = 1;
+
+            if (dx === 0 && dy === 0) {
+                if (isMobile) {
+                    dx = touchMoveX;
+                    dy = touchMoveY;
+                    const mag = Math.sqrt(dx*dx + dy*dy);
+                    if (mag > 1) { dx /= mag; dy /= mag; }
+                    touchMoveX *= 0.8;
+                    touchMoveY *= 0.8;
+                } else {
+                    if (keys['ArrowUp'] || keys['w'] || keys['W']) dy = -1;
+                    if (keys['ArrowDown'] || keys['s'] || keys['S']) dy = 1;
+                    if (keys['ArrowLeft'] || keys['a'] || keys['A']) dx = -1;
+                    if (keys['ArrowRight'] || keys['d'] || keys['D']) dx = 1;
+                }
             }
 
             if (dx !== 0 && dy !== 0) { const n = Math.SQRT2; dx /= n; dy /= n; }
@@ -384,6 +399,18 @@
         });
         document.addEventListener('keyup', (e) => { keys[e.key] = false; });
 
+        // ===== D-PAD CONTROLS =====
+        let dpadDirs = { up: false, down: false, left: false, right: false };
+        document.querySelectorAll('.s2-dpad-btn').forEach(btn => {
+            const dir = btn.dataset.dir;
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); dpadDirs[dir] = true; });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); dpadDirs[dir] = false; });
+            btn.addEventListener('touchcancel', () => { dpadDirs[dir] = false; });
+            btn.addEventListener('mousedown', () => { dpadDirs[dir] = true; });
+            btn.addEventListener('mouseup', () => { dpadDirs[dir] = false; });
+            btn.addEventListener('mouseleave', () => { dpadDirs[dir] = false; });
+        });
+
         let lastTX = 0, lastTY = 0;
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -402,7 +429,7 @@
         canvas.addEventListener('touchend', (e) => { e.preventDefault(); touchMoveX = 0; touchMoveY = 0; });
         canvas.addEventListener('touchcancel', () => { touchMoveX = 0; touchMoveY = 0; });
 
-            ctx.fillStyle = '#0a0812';
+            ctx.fillStyle = '#0a0512';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         drawArena(); drawEnemy(); drawPlayer();
     </script>

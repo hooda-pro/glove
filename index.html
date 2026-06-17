@@ -3,60 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع خاص</title>
+    <title>لجَنات 🤍</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .pass-box-new {
+            position: relative; z-index: 1; text-align: center;
+            padding: 2.5rem 2rem;
+            background: rgba(18, 10, 26, 0.85);
+            border: 1px solid rgba(160, 96, 208, 0.2);
+            border-radius: 24px;
+            box-shadow: 0 0 60px rgba(160,96,208,0.15), 0 20px 60px rgba(0,0,0,0.5);
+            max-width: 340px; width: 90%;
+            backdrop-filter: blur(12px);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        .pass-box-new .icon { font-size: 2.8rem; margin-bottom: 0.5rem; animation: pulse 2s ease-in-out infinite; }
+        .pass-box-new h1 { font-size: 1.6rem; font-weight: 900; color: #e0b8d8; margin-bottom: 0.3rem; }
+        .pass-box-new p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .pass-input-wrap {
+            display: flex; gap: 0.5rem; justify-content: center;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(160,96,208,0.15);
+            border-radius: 14px; padding: 0.3rem;
+            transition: all 0.3s;
+        }
+        .pass-input-wrap:focus-within { border-color: rgba(160,96,208,0.4); box-shadow: 0 0 20px rgba(160,96,208,0.1); }
+        .pass-input-wrap input {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: var(--text-primary); font-size: 1rem; font-family: var(--font-main);
+            padding: 0.7rem 1rem; text-align: center; letter-spacing: 4px;
+        }
+        .pass-input-wrap button {
+            padding: 0.7rem 1.2rem; border: none; border-radius: 10px;
+            background: linear-gradient(135deg, #a060d0, #c870b0);
+            color: #fff; font-size: 1.1rem; cursor: pointer;
+            transition: all 0.3s; font-weight: 700; font-family: var(--font-main);
+        }
+        .pass-input-wrap button:active { transform: scale(0.95); }
+
+        .hero-new {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            position: relative; overflow: hidden; z-index: 1;
+        }
+        .hero-new-bg {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, #1a0a28 0%, #0a0512 60%);
+            z-index: 0;
+        }
+        .hero-new-content {
+            position: relative; z-index: 1; text-align: center; padding: 1.5rem;
+        }
+        .hero-roses {
+            display: flex; justify-content: center; gap: 1rem;
+            margin-bottom: 1rem; flex-wrap: wrap;
+        }
+        .hero-roses span {
+            display: inline-block;
+            animation: bounceRose 2s ease-in-out infinite;
+        }
+        .hero-roses span:nth-child(1) { animation-delay: 0s; }
+        .hero-roses span:nth-child(2) { animation-delay: 0.3s; }
+        .hero-roses span:nth-child(3) { animation-delay: 0.6s; }
+        .hero-roses span:nth-child(4) { animation-delay: 0.9s; }
+        .hero-roses span:nth-child(5) { animation-delay: 1.2s; }
+        @keyframes bounceRose {
+            0%,100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(8deg); }
+        }
+
+        .main-title-new {
+            font-size: clamp(1.6rem, 5vw, 2.8rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #e0b8d8, #a060d0, #c870b0, #e0b8d8);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 5s ease infinite;
+            margin-bottom: 0.5rem; line-height: 1.4;
+            opacity: 0;
+        }
+        .main-title-new.typewriter { opacity: 1; }
+
+        .sub-title-new {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem; opacity: 0;
+            animation: fadeInUp 0.8s ease 1.5s forwards;
+        }
+
+        .hero-glow {
+            position: absolute; width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(160,96,208,0.08) 0%, transparent 70%);
+            top: -200px; left: 50%; transform: translateX(-50%);
+            animation: orbFloat 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .pink-gradient { background: linear-gradient(135deg, #a060d0, #c870b0, #e0b8d8); }
+
+        .error-new {
+            margin-top: 0.8rem; color: #e74c3c; font-size: 0.9rem; font-weight: 700;
+            animation: shake 0.4s ease;
+        }
+
+        .cards-section-new {
+            padding: 2.5rem 1.2rem 3rem;
+            max-width: 480px; margin: 0 auto; position: relative; z-index: 1;
+        }
+        .cards-section-new .title {
+            text-align: center; font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+            font-weight: 700; color: var(--text-primary);
+            margin-bottom: 1.2rem; line-height: 1.6;
+        }
+        .cards-section-new .title span { color: var(--accent-mauve); }
+
+        .cta-new {
+            text-align: center; padding: 3rem 1.5rem;
+            position: relative;
+        }
+        .cta-new .glow {
+            position: absolute; width: 400px; height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(160,96,208,0.06) 0%, transparent 70%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        .cta-new button {
+            padding: 1.2rem 2.5rem; font-size: 1.1rem; font-weight: 700;
+            font-family: var(--font-main); border: none; border-radius: 50px;
+            background: linear-gradient(135deg, #a060d0, #c870b0);
+            color: #fff; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(160,96,208,0.3);
+            position: relative;
+        }
+        .cta-new button:active { transform: scale(0.95); }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    </style>
 </head>
 <body>
-
     <canvas id="bgCanvas"></canvas>
 
     <div id="passwordOverlay" class="overlay">
-        <div class="bubbles-container">
-            <div class="bubble" style="--x:10%;--s:6;--d:0s;"></div>
-            <div class="bubble" style="--x:25%;--s:4;--d:0.5s;"></div>
-            <div class="bubble" style="--x:40%;--s:8;--d:1s;"></div>
-            <div class="bubble" style="--x:55%;--s:5;--d:1.5s;"></div>
-            <div class="bubble" style="--x:70%;--s:7;--d:2s;"></div>
-            <div class="bubble" style="--x:85%;--s:3;--d:2.5s;"></div>
-            <div class="bubble" style="--x:15%;--s:5;--d:3s;"></div>
-            <div class="bubble" style="--x:50%;--s:6;--d:0.8s;"></div>
-            <div class="bubble" style="--x:30%;--s:4;--d:1.2s;"></div>
-            <div class="bubble" style="--x:65%;--s:7;--d:1.8s;"></div>
-            <div class="bubble" style="--x:90%;--s:5;--d:2.2s;"></div>
-            <div class="bubble" style="--x:5%;--s:3;--d:0.3s;"></div>
-            <div class="bubble" style="--x:45%;--s:8;--d:1.7s;"></div>
-            <div class="bubble" style="--x:78%;--s:4;--d:2.8s;"></div>
-            <div class="bubble" style="--x:20%;--s:6;--d:3.2s;"></div>
-        </div>
-
-        <div class="password-box">
-            <div class="pass-icon">💗</div>
-            <h1 class="pass-title">لجَنات 🤍</h1>
-            <p class="pass-sub">اكتبي كلمة السر ياقلبي 🫶</p>
-            <div class="input-group">
-                <input type="password" id="passwordInput" placeholder="•••••••" style="text-align:center;" autofocus>
-                <button id="loginBtn">➡️</button>
+        <div class="bubbles-container" id="bubbleContainer"></div>
+        <div class="pass-box-new">
+            <div class="icon">🌹</div>
+            <h1>جَنات 🤍</h1>
+            <p>اكتبي كلمة السر ياقلبي 🫶</p>
+            <div class="pass-input-wrap">
+                <input type="password" id="passwordInput" placeholder="•••••••" autofocus>
+                <button id="loginBtn">ادخلي 💜</button>
             </div>
-            <p id="errorMsg" class="error hidden">غلط! حاولي تاني 🫵😂</p>
+            <p id="errorMsg" class="error-new hidden">غلط! حاولي تاني 🫵😂</p>
         </div>
     </div>
 
     <div id="mainContent" class="hidden">
-        <section class="hero" id="hero">
-            <div class="hero-bg"></div>
-            <div class="hero-content">
-                <div class="balloons">
-                    <div class="balloon b1" style="font-size:2.5rem;">🐤</div>
-                    <div class="balloon b2" style="font-size:2rem;">💗</div>
-                    <div class="balloon b3" style="font-size:2.5rem;">🐤</div>
-                    <div class="balloon b4" style="font-size:2.2rem;">🩷</div>
-                    <div class="balloon b5" style="font-size:2.6rem;">💜</div>
-                    <div class="balloon b6" style="font-size:2rem;">💕</div>
+        <section class="hero-new" id="hero">
+            <div class="hero-new-bg"></div>
+            <div class="hero-new-content">
+                <div class="hero-roses">
+                    <span style="font-size:2.5rem;">🌹</span>
+                    <span style="font-size:2rem;">💜</span>
+                    <span style="font-size:2.8rem;">🌹</span>
+                    <span style="font-size:2.2rem;">💗</span>
+                    <span style="font-size:2.4rem;">🌹</span>
                 </div>
-                <h1 class="main-title glitch" data-text="بحبك يا جنات 🤍🤍🤍">بحبك يا جنات 🤍🤍🤍</h1>
-                <p class="sub-title">أحلى بنت في الدنيا كلها 🫶💕</p>
+                <h1 class="main-title-new" id="mainTitle">بحبك يا جنات 🤍🤍🤍</h1>
+                <p class="sub-title-new">أحلى وأجمل بنوتة في الدنيا كلها 🫶💜</p>
                 <div class="next-hint" id="nextHint">
                     <span>انزلي تحت 👇</span>
                     <div class="scroll-arrow">⬇️</div>
@@ -64,21 +183,18 @@
             </div>
         </section>
 
-        <section class="cards-section cards-section-hidden" id="cardsSection">
-            <div class="cards-header">
-                <h2 class="section-title">دول صور البنت اللي قلبي بيحبها 💕</h2>
-                <div class="progress-bar" id="progressBar">
-                    <div class="progress-fill" id="progressFill"></div>
-                    <span class="progress-text" id="progressText">0 / 4</span>
-                </div>
+        <section class="cards-section cards-section-hidden cards-section-new" id="cardsSection">
+            <h2 class="title">دول صور <span>البنت اللي قلبي بيحبها</span> 💜🌹</h2>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+                <span class="progress-text" id="progressText">0 / 4</span>
             </div>
-
             <div class="cards-grid cards-grid-2col">
                 <div class="card" data-index="0">
                     <div class="card-inner">
-                        <div class="card-front" style="background:linear-gradient(145deg,#1a1028,#2a1540);">
+                        <div class="card-front" style="background:linear-gradient(145deg,#120a1e,#200a30);">
                             <div class="card-num">01</div>
-                            <div class="card-front-icon">💗</div>
+                            <div class="card-front-icon">💜</div>
                             <h3>البطاقة الأولى</h3>
                         </div>
                         <div class="card-back">
@@ -88,9 +204,9 @@
                 </div>
                 <div class="card" data-index="1">
                     <div class="card-inner">
-                        <div class="card-front" style="background:linear-gradient(145deg,#1a1028,#2a1540);">
+                        <div class="card-front" style="background:linear-gradient(145deg,#120a1e,#200a30);">
                             <div class="card-num">02</div>
-                            <div class="card-front-icon">🌷</div>
+                            <div class="card-front-icon">🌹</div>
                             <h3>البطاقة التانية</h3>
                         </div>
                         <div class="card-back">
@@ -100,9 +216,9 @@
                 </div>
                 <div class="card" data-index="2">
                     <div class="card-inner">
-                        <div class="card-front" style="background:linear-gradient(145deg,#0f1220,#1a1040);">
+                        <div class="card-front" style="background:linear-gradient(145deg,#0e0818,#180a28);">
                             <div class="card-num">03</div>
-                            <div class="card-front-icon">💜</div>
+                            <div class="card-front-icon">💗</div>
                             <h3>البطاقة التالتة</h3>
                         </div>
                         <div class="card-back">
@@ -112,7 +228,7 @@
                 </div>
                 <div class="card" data-index="3">
                     <div class="card-inner">
-                        <div class="card-front" style="background:linear-gradient(145deg,#0f1220,#1a1040);">
+                        <div class="card-front" style="background:linear-gradient(145deg,#0e0818,#180a28);">
                             <div class="card-num">04</div>
                             <div class="card-front-icon">🩷</div>
                             <h3>البطاقة الرابعة</h3>
@@ -123,22 +239,23 @@
                     </div>
                 </div>
             </div>
-
             <div class="cards-complete hidden" id="cardsComplete">
                 <div class="complete-icon">🎉</div>
                 <p class="complete-text">استني انزلي تحت كمان 😏</p>
             </div>
         </section>
 
-        <section class="cta-section hidden" id="ctaSection">
-            <div class="cta-glow"></div>
-            <div class="cta-content">
-                <div class="cta-tease">
-                    <span class="tease-icon">🤔</span>
-                    <h2>لسه فاضلكي حاجة كمان 😏</h2>
+        <section class="cta-new hidden" id="ctaSection">
+            <div class="glow"></div>
+            <div class="cta-content" style="position:relative;z-index:1;">
+                <div style="margin-bottom:0.8rem;">
+                    <span style="font-size:2rem;">🌹</span>
+                    <span style="font-size:1.5rem;">💜</span>
+                    <span style="font-size:2rem;">🌹</span>
                 </div>
-                <button id="ctaBtn" class="cta-button">اضغطي هنا ياروحي 💗</button>
-                <p class="cta-sub">أوعي تندمي ياقمر 🐤🩷</p>
+                <h2 style="font-size:1.3rem;font-weight:700;color:var(--text-primary);margin-bottom:1rem;">لسه فاضلكي حاجة كمان 😏</h2>
+                <button id="ctaBtn" class="cta-new-btn">اضغطي هنا ياروحي 💗</button>
+                <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:0.8rem;font-style:italic;">أوعي تندمي ياقمر 🌹🩷</p>
             </div>
         </section>
     </div>

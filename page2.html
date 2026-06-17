@@ -19,7 +19,7 @@
             justify-content: center;
             padding: 2rem;
             position: relative;
-            background: radial-gradient(ellipse at 30% 20%, #1a1028 0%, #0a0812 70%);
+            background: radial-gradient(ellipse at 30% 20%, #1a0a28 0%, #0a0512 70%);
             overflow: hidden;
         }
 
@@ -31,14 +31,14 @@
 
         .page2-bg-orb:nth-child(1) {
             width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(200,132,176,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(160,96,208,0.1) 0%, transparent 70%);
             top: -150px; right: -150px;
             animation: orbFloat 8s ease-in-out infinite;
         }
 
         .page2-bg-orb:nth-child(2) {
             width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(160,112,192,0.06) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(200,132,176,0.08) 0%, transparent 70%);
             bottom: -100px; left: -100px;
             animation: orbFloat 10s ease-in-out infinite 3s;
         }
@@ -416,7 +416,7 @@
 
         // ===== FALLING HEARTS =====
         const heartsContainer = document.getElementById('fallingHearts');
-        const heartEmojis = ['❤️', '💖', '💗', '💕', '🩷', '💜', '💝', '🐤'];
+        const heartEmojis = ['❤️', '💖', '💗', '💕', '🩷', '💜', '💝', '🐤', '🌹', '🌸'];
 
         for (let i = 0; i < 25; i++) {
             const heart = document.createElement('div');
@@ -427,6 +427,19 @@
             heart.style.animationDuration = (5 + Math.random() * 8) + 's';
             heart.style.animationDelay = (Math.random() * 10) + 's';
             heartsContainer.appendChild(heart);
+        }
+
+        // ===== FLOATING ROSES =====
+        const roseEmojis2 = ['🌹', '💜', '🌸', '🩷'];
+        for (let i = 0; i < 10; i++) {
+            const r = document.createElement('div');
+            r.className = 'rose-float';
+            r.textContent = roseEmojis2[Math.floor(Math.random() * roseEmojis2.length)];
+            r.style.left = Math.random() * 100 + '%';
+            r.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+            r.style.animationDuration = (8 + Math.random() * 10) + 's';
+            r.style.animationDelay = (Math.random() * 10) + 's';
+            document.body.appendChild(r);
         }
 
         // ===== SPARKLES =====
