@@ -5,19 +5,42 @@
 }
 
 :root {
-    --bg-primary: #080312;
-    --bg-secondary: #10081a;
-    --text-primary: #f0e8f5;
-    --text-secondary: #b898c8;
-    --accent-gold: #b858a8;
-    --accent-rose: #8844c0;
-    --accent-teal: #e090b8;
-    --border-glow: rgba(136, 68, 192, 0.3);
-    --shadow-gold: rgba(136, 68, 192, 0.2);
     --font-main: 'Cairo', 'Segoe UI', sans-serif;
     --accent-purple: #8844c0;
     --accent-mauve: #b870a8;
-    --accent-rosegold: #d890b0;
+    --accent-pink: #d460a0;
+    --accent-rose: #e890b8;
+    --accent-light: #f5e4f0;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #080312;
+    --bg-secondary: #10081a;
+    --bg-card: #0e0518;
+    --text-primary: #f0e8f5;
+    --text-secondary: #b898c8;
+    --border-glow: rgba(136, 68, 192, 0.3);
+    --shadow-glow: rgba(136, 68, 192, 0.2);
+    --overlay-bg: rgba(3, 1, 5, 0.92);
+    --pass-bg: rgba(16, 8, 26, 0.85);
+    --btn-text: #fff;
+    --hero-bg: radial-gradient(ellipse at 50% 0%, #12051e 0%, #080312 60%);
+    --overlay-solid: radial-gradient(ellipse at center, #0e0318 0%, #030105 100%);
+}
+
+[data-theme="light"] {
+    --bg-primary: #faf0f5;
+    --bg-secondary: #f5e4f0;
+    --bg-card: #fff5fa;
+    --text-primary: #2a1020;
+    --text-secondary: #884466;
+    --border-glow: rgba(136, 68, 192, 0.15);
+    --shadow-glow: rgba(136, 68, 192, 0.1);
+    --overlay-bg: rgba(250, 240, 245, 0.95);
+    --pass-bg: rgba(255, 245, 250, 0.9);
+    --btn-text: #fff;
+    --hero-bg: radial-gradient(ellipse at 50% 0%, #f5e4f0 0%, #faf0f5 60%);
+    --overlay-solid: radial-gradient(ellipse at center, #f5e4f0 0%, #faf0f5 100%);
 }
 
 html { scroll-behavior: smooth; }
@@ -32,7 +55,7 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
-::selection { background: var(--accent-gold); color: #0a0a0f; }
+::selection { background: var(--accent-purple); color: #fff; }
 
 .hidden { display: none !important; }
 
@@ -55,17 +78,31 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(ellipse at center, #0e0318 0%, #030105 100%);
+    background: var(--overlay-solid);
 }
+
+/* ========== THEME TOGGLE ========== */
+.theme-toggle {
+    position: fixed; top: 1rem; left: 1rem; z-index: 9999;
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid var(--border-glow);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1.3rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s; backdrop-filter: blur(8px);
+    box-shadow: 0 0 15px var(--shadow-glow);
+}
+.theme-toggle:active { transform: scale(0.9); }
 
 /* ========== INTRO ANIMATION ========== */
 .intro-overlay {
     position: fixed; inset: 0; z-index: 2000;
-    background: radial-gradient(ellipse at center, #0e0318 0%, #030105 100%);
+    background: var(--overlay-solid);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     transition: opacity 0.8s ease;
 }
-.intro-overlay.hidden { display: none; }
+.intro-overlay.hidden { display: none !important; }
 
 .intro-name {
     font-size: clamp(3rem, 10vw, 6rem);
@@ -135,7 +172,7 @@ body {
 /* ========== LOVE MESSAGES ========== */
 .love-overlay {
     position: fixed; inset: 0; z-index: 1500;
-    background: rgba(3, 1, 5, 0.92);
+    background: var(--overlay-bg);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 2rem; text-align: center;
     transition: opacity 0.6s ease;
@@ -251,16 +288,20 @@ body {
 .pass-box-new {
     position: relative; z-index: 1; text-align: center;
     padding: 2.5rem 2rem;
-    background: rgba(16, 8, 26, 0.85);
-    border: 1px solid rgba(136, 68, 192, 0.2);
+    background: var(--pass-bg);
+    border: 1px solid var(--border-glow);
     border-radius: 24px;
-    box-shadow: 0 0 60px rgba(136,68,192,0.12), 0 20px 60px rgba(0,0,0,0.5);
+    box-shadow: 0 0 60px var(--shadow-glow), 0 20px 60px rgba(0,0,0,0.5);
     max-width: 340px; width: 90%;
     backdrop-filter: blur(12px);
     animation: glowPulse 3s ease-in-out infinite;
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, box-shadow 0.3s;
+}
+
+[data-theme="light"] .pass-box-new {
+    box-shadow: 0 0 60px var(--shadow-glow), 0 20px 60px rgba(136,68,192,0.08);
 }
 
 .pass-box-new .icon {
@@ -321,7 +362,7 @@ body {
 .hero-bg {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, #12051e 0%, #080312 60%);
+    background: var(--hero-bg);
     z-index: 0;
 }
 
@@ -356,7 +397,7 @@ body {
 .main-title {
     font-size: clamp(1.8rem, 5vw, 3.5rem);
     font-weight: 900;
-    background: linear-gradient(135deg, var(--accent-gold), #f0b8d8, var(--accent-rose), var(--accent-gold));
+    background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple), var(--accent-rose), var(--accent-pink));
     background-size: 300% 300%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -462,7 +503,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, var(--accent-gold), var(--accent-rose));
+    background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
     width: var(--pct, 0%);
     border-radius: 10px;
     transition: width 0.6s ease;
@@ -540,7 +581,7 @@ body {
 
 .card-back {
     transform: rotateY(180deg);
-    background: var(--bg-primary);
+    background: var(--bg-card);
     border: 1px solid var(--border-glow);
 }
 
@@ -696,7 +737,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: 0 0 50px var(--shadow-gold);
+    box-shadow: 0 0 50px var(--shadow-glow);
 }
 
 .modal-photo-frame img {

@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     const PASSWORD = 'jannat';
     const overlay = document.getElementById('passwordOverlay');
     const mainContent = document.getElementById('mainContent');
@@ -27,8 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const loveTextContainer = document.getElementById('loveTextContainer');
     const loveEmojiRow = document.getElementById('loveEmojiRow');
     const loveNextHint = document.getElementById('loveNextHint');
+    const themeBtn = document.getElementById('themeToggle');
 
     const isMobile = window.innerWidth <= 768;
+
+    // ========== THEME TOGGLE ==========
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    if (themeBtn) {
+        themeBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        themeBtn.addEventListener('click', () => {
+            const cur = document.documentElement.getAttribute('data-theme');
+            const next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+        });
+    }
 
     // ========== INTRO ANIMATION ==========
     function startIntro() {
@@ -45,47 +59,35 @@ document.addEventListener('DOMContentLoaded', () => {
             introSparkles.appendChild(s);
         }
 
-        // Step 1: Show جَنات
         introName.classList.add('show');
 
-        // Step 2: After 2.5s, fade it out and show Jannat
         setTimeout(() => {
-            introName.classList.remove('show');
-            introName.classList.add('fade');
+            introName.style.opacity = '0';
+            introName.style.transform = 'scale(0.8)';
             setTimeout(() => {
                 introName.style.display = 'none';
-                introNameEn.classList.add('show');
+                introNameEn.style.opacity = '1';
+                introNameEn.style.transform = 'scale(1)';
             }, 800);
         }, 2500);
 
-        // Step 3: After 2.5s more, fade everything and show password
         setTimeout(() => {
-            introNameEn.classList.remove('show');
-            introNameEn.classList.add('fade');
+            introOverlay.style.opacity = '0';
             setTimeout(() => {
-                introOverlay.classList.add('hidden');
+                introOverlay.style.display = 'none';
                 overlay.classList.remove('hidden');
                 passBox.style.opacity = '1';
                 passBox.style.transform = 'translateY(0)';
                 setTimeout(() => passwordInput.focus(), 300);
             }, 800);
         }, 5000);
-
-        // Also remove overlay after full 5.8s if still showing
-        setTimeout(() => {
-            introOverlay.style.opacity = '0';
-        }, 5600);
     }
 
-    // ========== BG PARTICLES (hearts & stars) ==========
+    // ========== BG PARTICLES ==========
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
     let W, H;
-
-    function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-    }
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
     resize();
     window.addEventListener('resize', resize);
 
@@ -121,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.globalAlpha = this.alpha;
             ctx.fillStyle = this.color;
             const s = this.size;
-
             if (this.shape === 'heart') {
                 ctx.beginPath();
                 ctx.moveTo(0, s * 0.5);
@@ -147,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.closePath();
                 ctx.fill();
             }
-
             ctx.restore();
         }
     }
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateParticles();
 
-    // ========== FLOATING SHAPES (password bg) ==========
+    // ========== FLOATING SHAPES ==========
     const shapeContainer = document.getElementById('shapeContainer');
     if (shapeContainer) {
         const shapeTypes = ['heart', 'star', 'diamond'];
@@ -172,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.style.setProperty('--s', (2 + Math.random() * 5) + '');
             wrapper.style.setProperty('--dur', (10 + Math.random() * 12) + 's');
             wrapper.style.setProperty('--d', (Math.random() * 8) + 's');
-
             const inner = document.createElement('i');
             inner.className = 'float-shape-inner ' + shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
             wrapper.appendChild(inner);
@@ -188,22 +187,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkPassword() {
         if (isProcessingPassword) return;
         isProcessingPassword = true;
-
         if (passwordInput.value.trim().toLowerCase() === PASSWORD.toLowerCase()) {
             sessionStorage.setItem('auth', 'true');
-
             passBox.style.transition = 'all 0.4s ease';
             passBox.style.borderColor = 'rgba(136, 68, 192, 0.6)';
             passBox.style.boxShadow = '0 0 60px rgba(136, 68, 192, 0.2)';
             passBox.style.transform = 'scale(1.03)';
-            passBox.querySelector('.icon').textContent = '💜';
-
+            const icon = passBox.querySelector('.icon');
+            if (icon) icon.textContent = '💜';
             setTimeout(() => {
                 overlay.style.transition = 'opacity 0.5s ease';
                 overlay.style.opacity = '0';
                 setTimeout(() => {
                     overlay.classList.add('hidden');
                     overlay.style.opacity = '';
+                    overlay.style.transition = '';
                     startLoveMessages();
                     isProcessingPassword = false;
                 }, 500);
@@ -220,26 +218,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMsg.classList.add('hidden');
                 passBox.style.animation = '';
                 passBox.style.borderColor = '';
+                passBox.style.border = '';
                 isProcessingPassword = false;
             }, 2000);
         }
     }
 
     loginBtn.addEventListener('click', checkPassword);
-    passwordInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') checkPassword();
-    });
+    passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
 
-    // ========== AUTO-AUTH ==========
+    // ========== AUTO AUTH ==========
     if (sessionStorage.getItem('auth')) {
-        introOverlay.classList.add('hidden');
+        introOverlay.style.display = 'none';
         overlay.classList.add('hidden');
         mainContent.classList.remove('hidden');
         document.body.style.overflow = 'auto';
         startHeroAnimation();
         startCardsObserver();
     } else {
-        // Start intro animation
         setTimeout(() => startIntro(), 300);
     }
 
@@ -259,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const allEmojis = ['💜', '🌹', '🩷', '🥺', '🫶', '😘', '💗', '🌸', '✨', '😍'];
 
-        function typeMessage(text, container, speed = 50) {
+        function typeMessage(text, container, speed) {
             return new Promise(resolve => {
                 container.textContent = '';
                 container.classList.add('show');
@@ -284,9 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 function addOne() {
                     if (shown < count) {
                         const span = document.createElement('span');
-                        span.className = 'show';
                         span.textContent = shuffled[shown % shuffled.length];
                         loveEmojiRow.appendChild(span);
+                        requestAnimationFrame(() => span.classList.add('show'));
                         shown++;
                         setTimeout(addOne, 300 + Math.random() * 400);
                     } else {
@@ -298,18 +294,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         async function runLoveSequence() {
-            // Show each line with typewriter
-            for (const line of loveLines) {
-                await new Promise(r => setTimeout(r, line.delay - (loveLines.indexOf(line) > 0 ? loveLines[loveLines.indexOf(line) - 1].delay : 0)));
+            for (let i = 0; i < loveLines.length; i++) {
+                const delay = i === 0 ? loveLines[i].delay : loveLines[i].delay - loveLines[i-1].delay;
+                await new Promise(r => setTimeout(r, delay));
                 const el = document.createElement('div');
                 el.className = 'love-text';
                 loveTextContainer.appendChild(el);
-                await typeMessage(line.text, el, isMobile ? 60 : 45);
-                // Add random emojis after each line
+                await typeMessage(loveLines[i].text, el, isMobile ? 60 : 45);
                 await showEmojisGradually(2 + Math.floor(Math.random() * 3));
             }
-
-            // After all messages, show pointing hint
             await new Promise(r => setTimeout(r, 1000));
             loveNextHint.classList.add('show');
         }
@@ -322,12 +315,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 loveOverlay.classList.add('hidden');
                 loveOverlay.style.opacity = '';
+                loveOverlay.style.transition = '';
                 mainContent.classList.remove('hidden');
                 document.body.style.overflow = 'auto';
                 startHeroAnimation();
                 startCardsObserver();
             }, 500);
-        });
+        }, { once: true });
     }
 
     // ========== FLOATING ROSES ==========
@@ -348,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== HERO ==========
     function startHeroAnimation() {
         const heroContent = hero.querySelector('.hero-new-content');
-        heroContent.style.animation = 'heroEntrance 0.8s ease forwards';
+        if (heroContent) heroContent.style.animation = 'heroEntrance 0.8s ease forwards';
         setTimeout(() => typewriterEffect(), 400);
         startFloatingRoses();
         setTimeout(() => {
@@ -406,10 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.r = Math.random() * 360;
                 this.rs = (Math.random() - 0.5) * 3;
             }
-            u() {
-                this.y += this.s; this.x += this.wind; this.r += this.rs;
-                if (this.y > cH + 20) this.reset();
-            }
+            u() { this.y += this.s; this.x += this.wind; this.r += this.rs; if (this.y > cH + 20) this.reset(); }
             d() {
                 cCtx.save();
                 cCtx.translate(this.x, this.y);
@@ -421,7 +412,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         for (let i = 0; i < cCount; i++) cPieces.push(new C());
-
         (function loop() {
             cCtx.clearRect(0, 0, cW, cH);
             cPieces.forEach(p => { p.u(); p.d(); });
@@ -435,22 +425,15 @@ document.addEventListener('DOMContentLoaded', () => {
         cardsRevealed = true;
         cardsSection.classList.add('visible');
         setTimeout(() => {
-            cards.forEach((card, i) => {
-                setTimeout(() => card.classList.add('visible'), i * 200);
-            });
+            cards.forEach((card, i) => { setTimeout(() => card.classList.add('visible'), i * 200); });
         }, 300);
     }
 
     function startCardsObserver() {
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && !cardsRevealed) {
-                revealCards();
-                observer.unobserve(cardsSection);
-            }
+            if (entries[0].isIntersecting && !cardsRevealed) { revealCards(); observer.unobserve(cardsSection); }
         }, { threshold: 0.05 });
-
         setTimeout(() => observer.observe(cardsSection), 500);
-
         const scrollCheck = () => {
             if (cardsRevealed) { window.removeEventListener('scroll', scrollCheck); return; }
             if (hero.getBoundingClientRect().bottom < window.innerHeight * 0.3) revealCards();
@@ -470,16 +453,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cards.forEach(card => {
         card.addEventListener('click', function(e) {
             const index = parseInt(this.dataset.index);
-
             if (this.classList.contains('flipped')) {
                 if (cardClicked.has(index)) showFunnyModal(index);
                 return;
             }
-
-            if (index !== nextExpectedIndex) {
-                showOrderWarning();
-                return;
-            }
+            if (index !== nextExpectedIndex) { showOrderWarning(); return; }
 
             this.classList.add('flipped');
             flippedCount++;
@@ -497,33 +475,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.appendChild(s);
                 const a = (i / sparkleCount) * Math.PI * 2;
                 const d = 40 + Math.random() * 50;
-                requestAnimationFrame(() => {
-                    s.style.transform = `translate(${Math.cos(a)*d}px, ${Math.sin(a)*d}px) scale(0)`;
-                    s.style.opacity = '0';
-                });
+                requestAnimationFrame(() => { s.style.transform = `translate(${Math.cos(a)*d}px, ${Math.sin(a)*d}px) scale(0)`; s.style.opacity = '0'; });
                 setTimeout(() => s.remove(), 700);
             }
 
             cardClicked.add(index);
             showModal(index);
-
             if (flippedCount === cards.length) setTimeout(onAllCardsFlipped, 1000);
         });
     });
 
     function showOrderWarning() {
-        const modal = document.getElementById('photoModal');
-        const frame = modal.querySelector('.modal-photo-frame');
-        frame.innerHTML = `
-            <div style="text-align:center;padding:2rem;">
-                <div style="font-size:3rem;margin-bottom:0.8rem;">😒</div>
-                <p style="font-size:1.2rem;font-weight:700;color:var(--text-primary);line-height:1.8;">
-                    بدعل مستعجله ليه كدا ياروحي<br>
-                    افتحي من بدايه 🫵😂
-                </p>
-            </div>
-        `;
-        modal.classList.remove('hidden');
+        const m = document.getElementById('photoModal');
+        const frame = m.querySelector('.modal-photo-frame');
+        frame.innerHTML = `<div style="text-align:center;padding:2rem;"><div style="font-size:3rem;margin-bottom:0.8rem;">😒</div><p style="font-size:1.2rem;font-weight:700;color:var(--text-primary);line-height:1.8;">بدعل مستعجله ليه كدا ياروحي<br>افتحي من بدايه 🫵😂</p></div>`;
+        m.classList.remove('hidden');
     }
 
     function updateProgress() {
@@ -536,28 +502,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function onAllCardsFlipped() {
         cardsComplete.classList.remove('hidden');
         cardsComplete.style.animation = 'scaleIn 0.5s ease forwards';
-
         for (let i = 0; i < (isMobile ? 15 : 30); i++) {
             const e = document.createElement('div');
             e.textContent = ['🎉','🎊','✨','💫','⭐'][Math.floor(Math.random()*5)];
             e.style.cssText = `position:fixed;font-size:1.2rem;pointer-events:none;z-index:999;left:${40 + Math.random()*20}%;top:40%;transition:all 1.2s ease;`;
             document.body.appendChild(e);
-            requestAnimationFrame(() => {
-                e.style.transform = `translate(${(Math.random()-0.5)*300}px, ${-150 - Math.random()*200}px) scale(0)`;
-                e.style.opacity = '0';
-            });
+            requestAnimationFrame(() => { e.style.transform = `translate(${(Math.random()-0.5)*300}px, ${-150 - Math.random()*200}px) scale(0)`; e.style.opacity = '0'; });
             setTimeout(() => e.remove(), 1500);
         }
-
         setTimeout(() => {
-            cards.forEach((card, i) => {
-                setTimeout(() => {
-                    card.style.transition = 'all 0.5s ease';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(-60px) scale(0.4)';
-                }, i * 80);
-            });
-
+            cards.forEach((card, i) => { setTimeout(() => { card.style.transition = 'all 0.5s ease'; card.style.opacity = '0'; card.style.transform = 'translateY(-60px) scale(0.4)'; }, i * 80); });
             setTimeout(() => {
                 cardsSection.style.transition = 'all 0.5s ease';
                 cardsSection.style.opacity = '0';
@@ -574,10 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== CTA ==========
     function showCTA() {
         ctaSection.classList.remove('hidden');
-        setTimeout(() => {
-            ctaSection.classList.add('visible');
-            ctaSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+        setTimeout(() => { ctaSection.classList.add('visible'); ctaSection.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
     }
 
     ctaBtn.addEventListener('click', () => {
@@ -594,10 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
         frame.style.animation = 'none';
         void frame.offsetHeight;
         const photoNum = index + 1;
-        frame.innerHTML = `
-            <img src="photo-${photoNum}.jpg" alt="${photoTitles[index]}"
-                 onerror="this.outerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:0.5rem;background:#0a0a0f;border-radius:14px;\'><span style=\'font-size:3rem;\'>🖼️</span><p style=\'color:var(--text-secondary);font-size:0.9rem;\'>الصورة مش موجودة</p></div>'">
-        `;
+        frame.innerHTML = `<img src="photo-${photoNum}.jpg" alt="${photoTitles[index]}" onerror="this.outerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:0.5rem;background:var(--bg-card);border-radius:14px;\'><span style=\'font-size:3rem;\'>🖼️</span><p style=\'color:var(--text-secondary);font-size:0.9rem;\'>الصورة مش موجودة</p></div>'">`;
         frame.style.animation = 'scaleIn 0.35s ease forwards';
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -607,12 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const frame = modal.querySelector('.modal-photo-frame');
         frame.style.animation = 'none';
         void frame.offsetHeight;
-        frame.innerHTML = `
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:#0a0a0f;border-radius:14px;padding:2rem;">
-                <span style="font-size:4rem;margin-bottom:0.5rem;">😂</span>
-                <p style="font-size:1.4rem;font-weight:700;color:var(--accent-gold);margin-bottom:0.5rem;">خلاص ي مزتي 😂🫵</p>
-            </div>
-        `;
+        frame.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:var(--bg-card);border-radius:14px;padding:2rem;"><span style="font-size:4rem;margin-bottom:0.5rem;">😂</span><p style="font-size:1.4rem;font-weight:700;color:var(--accent-pink);margin-bottom:0.5rem;">خلاص ي مزتي 😂🫵</p></div>`;
         frame.style.animation = 'scaleIn 0.35s ease forwards';
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -620,15 +563,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeModal() {
         modal.style.animation = 'fadeOut 0.2s ease forwards';
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.style.animation = '';
-            document.body.style.overflow = 'auto';
-        }, 200);
+        setTimeout(() => { modal.classList.add('hidden'); modal.style.animation = ''; document.body.style.overflow = 'auto'; }, 200);
     }
 
     modalClose.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
 });

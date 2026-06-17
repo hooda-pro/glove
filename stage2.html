@@ -12,7 +12,7 @@
         html, body { width: 100%; height: 100%; overflow: hidden; touch-action: none; }
         body {
             font-family: 'Cairo', sans-serif;
-            background: #0a0512;
+            background: var(--bg-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -78,7 +78,7 @@
         @media (max-width: 380px) { .s2-dpad { grid-template-columns: 50px 50px 50px; grid-template-rows: 50px 50px 50px; } }
         .s2-dpad-btn {
             border: none; border-radius: 14px;
-            background: rgba(136,68,192,0.15);
+            background: var(--bg-secondary);
             color: var(--text-primary); font-size: 1.5rem;
             cursor: pointer; -webkit-tap-highlight-color: transparent;
             user-select: none; touch-action: none;
@@ -96,6 +96,7 @@
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle">☀️</button>
     <canvas id="gameCanvas"></canvas>
 
         <div class="s2-hud">
@@ -135,6 +136,23 @@
     </div>
 
     <script>
+        // ===== THEME TOGGLE =====
+        (function() {
+            const st = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', st);
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.textContent = st === 'dark' ? '☀️' : '🌙';
+                btn.addEventListener('click', () => {
+                    const cur = document.documentElement.getAttribute('data-theme');
+                    const nxt = cur === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', nxt);
+                    localStorage.setItem('theme', nxt);
+                    btn.textContent = nxt === 'dark' ? '☀️' : '🌙';
+                });
+            }
+        })();
+
         if (!sessionStorage.getItem('auth')) { window.location.href = 'index.html'; }
 
         const canvas = document.getElementById('gameCanvas');
@@ -456,6 +474,9 @@
             ctx.fillStyle = '#080312';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         drawArena(); drawEnemy(); drawPlayer();
+
+        // ===== RESIZE =====
+        window.addEventListener('resize', () => {
     </script>
 </body>
 </html>

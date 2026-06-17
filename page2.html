@@ -19,7 +19,7 @@
             justify-content: center;
             padding: 2rem;
             position: relative;
-            background: radial-gradient(ellipse at 30% 20%, #12051e 0%, #080312 70%);
+            background: var(--hero-bg);
             overflow: hidden;
         }
 
@@ -343,6 +343,7 @@
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle">☀️</button>
     <div class="falling-hearts" id="fallingHearts"></div>
     <div class="sparkle-container" id="sparkleContainer"></div>
 
@@ -409,6 +410,23 @@
     </div>
 
     <script>
+        // ===== THEME TOGGLE =====
+        (function() {
+            const st = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', st);
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.textContent = st === 'dark' ? '☀️' : '🌙';
+                btn.addEventListener('click', () => {
+                    const cur = document.documentElement.getAttribute('data-theme');
+                    const nxt = cur === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', nxt);
+                    localStorage.setItem('theme', nxt);
+                    btn.textContent = nxt === 'dark' ? '☀️' : '🌙';
+                });
+            }
+        })();
+
         // ===== AUTH CHECK =====
         if (!sessionStorage.getItem('auth')) {
             window.location.href = 'index.html';
