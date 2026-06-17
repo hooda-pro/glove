@@ -427,9 +427,8 @@ document.addEventListener('DOMContentLoaded', () => {
         void frame.offsetHeight;
         frame.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:#0a0a0f;border-radius:14px;padding:2rem;">
-                <span style="font-size:4rem;margin-bottom:0.5rem;">😒</span>
-                <p style="font-size:1.3rem;font-weight:700;color:var(--accent-gold);margin-bottom:0.5rem;">اي يابنتي مش مزه اوي</p>
-                <p style="font-size:1rem;color:var(--text-secondary);">ليه بتفتحي الصوره تاني هاااا 😂</p>
+                <span style="font-size:4rem;margin-bottom:0.5rem;">😂</span>
+                <p style="font-size:1.4rem;font-weight:700;color:var(--accent-gold);margin-bottom:0.5rem;">خلاص ي مزتي 😂🫵</p>
             </div>
         `;
         frame.style.animation = 'scaleIn 0.35s ease forwards';
