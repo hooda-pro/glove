@@ -123,11 +123,11 @@
         }
         calcArena();
 
-        const player = { x: 0, y: 0, r: isMobile ? 16 : 20, speed: isMobile ? 2.5 : 3.2 };
-        const enemy = { x: 0, y: 0, r: isMobile ? 28 : 32, speed: isMobile ? 1.1 : 1.4 };
+        const player = { x: 0, y: 0, r: isMobile ? 14 : 20, speed: isMobile ? 2.8 : 3.2 };
+        const enemy = { x: 0, y: 0, r: isMobile ? 25 : 32, speed: isMobile ? 0.9 : 1.4 };
 
         let keys = {};
-        let timeLeft = 30;
+        let timeLeft = isMobile ? 25 : 30;
         let gameActive = false;
         let gameEnded = false;
         let animFrame = null;
@@ -159,31 +159,26 @@
         }
 
         function drawArena() {
-            ctx.shadowColor = 'rgba(200,132,176,0.2)';
-            ctx.shadowBlur = 60;
+            if (!isMobile) {
+                ctx.shadowColor = 'rgba(200,132,176,0.2)';
+                ctx.shadowBlur = 60;
+            }
             ctx.strokeStyle = 'rgba(200,132,176,0.3)';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = isMobile ? 2 : 3;
             ctx.beginPath();
             ctx.arc(arena.cx, arena.cy, arena.r, 0, Math.PI * 2);
             ctx.stroke();
             ctx.shadowBlur = 0;
 
-            ctx.strokeStyle = 'rgba(200,132,176,0.08)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(arena.cx, arena.cy, arena.r + 8, 0, Math.PI * 2);
-            ctx.stroke();
+            if (!isMobile) {
+                ctx.strokeStyle = 'rgba(200,132,176,0.08)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(arena.cx, arena.cy, arena.r + 8, 0, Math.PI * 2);
+                ctx.stroke();
+            }
 
-            const grad = ctx.createRadialGradient(arena.cx, arena.cy, 0, arena.cx, arena.cy, arena.r);
-            grad.addColorStop(0, 'rgba(26,16,37,0.3)');
-            grad.addColorStop(0.7, 'rgba(26,16,37,0.1)');
-            grad.addColorStop(1, 'rgba(200,132,176,0.03)');
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.arc(arena.cx, arena.cy, arena.r, 0, Math.PI * 2);
-            ctx.fill();
-
-            const dots = 12;
+            const dots = isMobile ? 6 : 12;
             for (let i = 0; i < dots; i++) {
                 const a = (i / dots) * Math.PI * 2;
                 const dx = Math.cos(a) * (arena.r - 4);
@@ -198,21 +193,19 @@
         function drawPlayer() {
             const x = player.x, y = player.y, r = player.r;
 
-            ctx.shadowColor = '#c884b0';
-            ctx.shadowBlur = 20;
+            if (!isMobile) {
+                ctx.shadowColor = '#c884b0';
+                ctx.shadowBlur = 20;
+            }
 
-            const grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
-            grad.addColorStop(0, '#fff0f8');
-            grad.addColorStop(0.3, '#f0b8d8');
-            grad.addColorStop(1, '#c884b0');
-            ctx.fillStyle = grad;
+            ctx.fillStyle = '#c884b0';
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
             ctx.beginPath();
             ctx.arc(x - r*0.25, y - r*0.3, r*0.2, 0, Math.PI * 2);
             ctx.fill();
@@ -221,28 +214,22 @@
         function drawEnemy() {
             const x = enemy.x, y = enemy.y, r = enemy.r;
 
-            ctx.shadowColor = 'rgba(231,76,60,0.35)';
-            ctx.shadowBlur = 25;
+            if (!isMobile) {
+                ctx.shadowColor = 'rgba(231,76,60,0.35)';
+                ctx.shadowBlur = 25;
+            }
 
             if (enemyImg.complete && enemyImg.naturalWidth > 0) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(x, y, r, 0, Math.PI * 2);
-                ctx.clip();
                 ctx.drawImage(enemyImg, x - r, y - r, r * 2, r * 2);
-                ctx.restore();
                 ctx.shadowBlur = 0;
                 ctx.strokeStyle = 'rgba(231,76,60,0.5)';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = isMobile ? 1.5 : 2;
                 ctx.beginPath();
                 ctx.arc(x, y, r, 0, Math.PI * 2);
                 ctx.stroke();
             } else {
                 ctx.shadowBlur = 0;
-                const grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
-                grad.addColorStop(0, '#e74c3c');
-                grad.addColorStop(1, '#c0392b');
-                ctx.fillStyle = grad;
+                ctx.fillStyle = '#c0392b';
                 ctx.beginPath();
                 ctx.arc(x, y, r, 0, Math.PI * 2);
                 ctx.fill();
@@ -308,12 +295,18 @@
 
         function gameLoop() {
             update();
-            if (!gameEnded) animFrame = requestAnimationFrame(gameLoop);
+            if (!gameEnded) {
+                if (isMobile) {
+                    animFrame = setTimeout(() => requestAnimationFrame(gameLoop), 16);
+                } else {
+                    animFrame = requestAnimationFrame(gameLoop);
+                }
+            }
         }
 
         function startTimer() {
-            timeLeft = 30;
-            document.getElementById('timerDisplay').textContent = '30';
+            timeLeft = isMobile ? 25 : 30;
+            document.getElementById('timerDisplay').textContent = timeLeft;
             timerInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById('timerDisplay').textContent = Math.ceil(timeLeft);
@@ -363,12 +356,13 @@
         function restartGame() {
             resultOverlay.classList.add('hidden');
             initPositions();
-            timeLeft = 30;
-            document.getElementById('timerDisplay').textContent = '30';
+            timeLeft = isMobile ? 25 : 30;
+            document.getElementById('timerDisplay').textContent = timeLeft;
             gameActive = true; gameEnded = false;
             if (timerInterval) clearInterval(timerInterval);
             startTimer();
-            animFrame = requestAnimationFrame(gameLoop);
+            if (isMobile) { animFrame = setTimeout(() => requestAnimationFrame(gameLoop), 16); }
+            else { animFrame = requestAnimationFrame(gameLoop); }
         }
 
         document.getElementById('startBtn').addEventListener('click', () => {
@@ -380,7 +374,8 @@
             ctx.fillStyle = '#0a0812';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawArena(); drawEnemy(); drawPlayer();
-            animFrame = requestAnimationFrame(gameLoop);
+            if (isMobile) { animFrame = setTimeout(() => requestAnimationFrame(gameLoop), 16); }
+            else { animFrame = requestAnimationFrame(gameLoop); }
         });
 
         document.addEventListener('keydown', (e) => {

@@ -359,6 +359,16 @@ body {
     gap: 1rem;
 }
 
+.cards-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+@media (max-width: 480px) {
+    .cards-grid-2col { gap: 0.6rem; }
+}
+
 .card {
     perspective: 1000px;
     height: 180px;
@@ -367,6 +377,8 @@ body {
     transform: translateY(20px);
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
+
+.cards-grid-2col .card { height: 160px; }
 
 .card.visible {
     opacity: 1;
