@@ -12,7 +12,7 @@
         html, body { width: 100%; height: 100%; overflow: hidden; touch-action: none; }
         body {
             font-family: 'Cairo', sans-serif;
-            background: #0a0a0f;
+            background: #0a0812;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -99,7 +99,7 @@
         <h2 class="s2-ov-title" id="resultTitle"></h2>
         <p class="s2-ov-sub" id="resultSub"></p>
         <div class="s2-timer-num hidden" id="redirectTimer"></div>
-        <button class="s2-ov-btn hidden" id="resultBtn">حاول تاني 🔄</button>
+        <button class="s2-ov-btn hidden" id="resultBtn">حاولي تاني 🔄</button>
     </div>
 
     <script>
@@ -159,16 +159,16 @@
         }
 
         function drawArena() {
-            ctx.shadowColor = 'rgba(212,137,158,0.15)';
+            ctx.shadowColor = 'rgba(200,132,176,0.2)';
             ctx.shadowBlur = 60;
-            ctx.strokeStyle = 'rgba(212,137,158,0.25)';
+            ctx.strokeStyle = 'rgba(200,132,176,0.3)';
             ctx.lineWidth = 3;
             ctx.beginPath();
             ctx.arc(arena.cx, arena.cy, arena.r, 0, Math.PI * 2);
             ctx.stroke();
             ctx.shadowBlur = 0;
 
-            ctx.strokeStyle = 'rgba(212,137,158,0.08)';
+            ctx.strokeStyle = 'rgba(200,132,176,0.08)';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.arc(arena.cx, arena.cy, arena.r + 8, 0, Math.PI * 2);
@@ -177,7 +177,7 @@
             const grad = ctx.createRadialGradient(arena.cx, arena.cy, 0, arena.cx, arena.cy, arena.r);
             grad.addColorStop(0, 'rgba(26,16,37,0.3)');
             grad.addColorStop(0.7, 'rgba(26,16,37,0.1)');
-            grad.addColorStop(1, 'rgba(212,137,158,0.03)');
+            grad.addColorStop(1, 'rgba(200,132,176,0.03)');
             ctx.fillStyle = grad;
             ctx.beginPath();
             ctx.arc(arena.cx, arena.cy, arena.r, 0, Math.PI * 2);
@@ -188,7 +188,7 @@
                 const a = (i / dots) * Math.PI * 2;
                 const dx = Math.cos(a) * (arena.r - 4);
                 const dy = Math.sin(a) * (arena.r - 4);
-                ctx.fillStyle = 'rgba(212,137,158,0.15)';
+                ctx.fillStyle = 'rgba(200,132,176,0.15)';
                 ctx.beginPath();
                 ctx.arc(arena.cx + dx, arena.cy + dy, 2, 0, Math.PI * 2);
                 ctx.fill();
@@ -198,13 +198,13 @@
         function drawPlayer() {
             const x = player.x, y = player.y, r = player.r;
 
-            ctx.shadowColor = '#d4899e';
+            ctx.shadowColor = '#c884b0';
             ctx.shadowBlur = 20;
 
             const grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, 0, x, y, r);
-            grad.addColorStop(0, '#fff5f0');
-            grad.addColorStop(0.3, '#f0b8c8');
-            grad.addColorStop(1, '#d4899e');
+            grad.addColorStop(0, '#fff0f8');
+            grad.addColorStop(0.3, '#f0b8d8');
+            grad.addColorStop(1, '#c884b0');
             ctx.fillStyle = grad;
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -346,7 +346,7 @@
 
         function showWin() {
             resultIcon.textContent = '🏆';
-            resultTitle.textContent = 'ما انت شاطر اهو! 🎉';
+            resultTitle.textContent = 'ما انتي شاطره اهو! 🎉';
             resultSub.textContent = 'أمال لما بتخشي علي اسكواد بتقعي نوك ليه؟! 😂';
             resultBtn.classList.add('hidden');
             redirectTimer.classList.remove('hidden');
@@ -377,7 +377,7 @@
             initPositions();
             gameActive = true; gameEnded = false;
             startTimer();
-            ctx.fillStyle = '#0a0a0f';
+            ctx.fillStyle = '#0a0812';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawArena(); drawEnemy(); drawPlayer();
             animFrame = requestAnimationFrame(gameLoop);
@@ -407,8 +407,8 @@
         canvas.addEventListener('touchend', (e) => { e.preventDefault(); touchMoveX = 0; touchMoveY = 0; });
         canvas.addEventListener('touchcancel', () => { touchMoveX = 0; touchMoveY = 0; });
 
-        ctx.fillStyle = '#0a0a0f';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0812';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         drawArena(); drawEnemy(); drawPlayer();
     </script>
 </body>

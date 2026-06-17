@@ -19,7 +19,7 @@
             justify-content: center;
             padding: 2rem;
             position: relative;
-            background: radial-gradient(ellipse at 30% 20%, #1a1025 0%, #0a0a0f 70%);
+            background: radial-gradient(ellipse at 30% 20%, #1a1028 0%, #0a0812 70%);
             overflow: hidden;
         }
 
@@ -31,14 +31,14 @@
 
         .page2-bg-orb:nth-child(1) {
             width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(212,168,83,0.06) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(200,132,176,0.08) 0%, transparent 70%);
             top: -150px; right: -150px;
             animation: orbFloat 8s ease-in-out infinite;
         }
 
         .page2-bg-orb:nth-child(2) {
             width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(192,132,151,0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(160,112,192,0.06) 0%, transparent 70%);
             bottom: -100px; left: -100px;
             animation: orbFloat 10s ease-in-out infinite 3s;
         }
@@ -220,9 +220,11 @@
             height: 3px;
             background: var(--accent-gold);
             border-radius: 50%;
-            box-shadow: 0 0 6px var(--accent-gold);
+            box-shadow: 0 0 8px var(--accent-gold);
             animation: sparkleAnim ease-in-out infinite;
         }
+        .sparkle:nth-child(odd) { background: var(--accent-rose); box-shadow: 0 0 8px var(--accent-rose); }
+        .sparkle:nth-child(3n) { background: #a070c0; box-shadow: 0 0 8px #a070c0; }
 
         @keyframes sparkleAnim {
             0%, 100% { opacity: 0; transform: scale(0); }
@@ -355,12 +357,12 @@
             <p class="p2-sub">أحلى وأجمل بنت في الدنيا كلها 🫶💕</p>
 
             <div class="icon-row">
-                <span>💗</span>
-                <span>🌸</span>
-                <span>🌷</span>
+                <span>🐤</span>
+                <span>💜</span>
+                <span>🐤</span>
                 <span>🩷</span>
+                <span>💗</span>
                 <span>💕</span>
-                <span>🌺</span>
                 <span>💝</span>
                 <span>✨</span>
             </div>
@@ -379,7 +381,7 @@
 
             <div style="margin-top:2rem;padding:1.5rem;background:rgba(255,255,255,0.03);border-radius:20px;border:1px dashed rgba(212,168,83,0.2);animation:fadeInUp 0.8s ease 1s both;">
                 <p style="font-size:1.4rem;font-weight:700;color:var(--accent-gold);animation:pulse 1.5s ease-in-out infinite;">
-                    تيجي روم ياض أطلعك اقصاء 😂🫵
+                    بعشقك مووت ي مزتي 💗💗💗
                 </p>
             </div>
     </div>
@@ -388,7 +390,7 @@
     <div id="confirmDialog" class="p2-dialog hidden">
         <div class="p2-dialog-content">
             <div class="p2-dialog-icon">🤨</div>
-            <h3 class="p2-dialog-title">دقيقه هو انت عايز ترجع؟</h3>
+            <h3 class="p2-dialog-title">دقيقه هو انتي عايزه ترجعي؟</h3>
             <div class="p2-dialog-buttons">
                 <button class="p2-dialog-btn p2-dialog-yes" id="dialogYes">ايوا 😎</button>
                 <button class="p2-dialog-btn p2-dialog-no" id="dialogNo">لا 😤</button>
@@ -400,7 +402,7 @@
     <div id="timerDialog" class="p2-dialog hidden">
         <div class="p2-dialog-content">
             <div class="p2-dialog-icon">😏</div>
-            <h3 class="p2-dialog-title">عايز ترجع متأكد؟</h3>
+            <h3 class="p2-dialog-title">عايزه ترجعي متأكده؟</h3>
             <p class="p2-dialog-sub">طيب مفيش رجوع يلا 🙃</p>
             <div class="p2-timer" id="p2Timer">5</div>
         </div>
@@ -414,15 +416,15 @@
 
         // ===== FALLING HEARTS =====
         const heartsContainer = document.getElementById('fallingHearts');
-        const heartEmojis = ['❤️', '💖', '💗', '💕', '🩷', '🌸', '🌷', '💝'];
+        const heartEmojis = ['❤️', '💖', '💗', '💕', '🩷', '💜', '💝', '🐤'];
 
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 25; i++) {
             const heart = document.createElement('div');
             heart.className = 'f-heart';
             heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
             heart.style.left = Math.random() * 100 + '%';
-            heart.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
-            heart.style.animationDuration = (6 + Math.random() * 8) + 's';
+            heart.style.fontSize = (0.8 + Math.random() * 1.4) + 'rem';
+            heart.style.animationDuration = (5 + Math.random() * 8) + 's';
             heart.style.animationDelay = (Math.random() * 10) + 's';
             heartsContainer.appendChild(heart);
         }
@@ -496,7 +498,7 @@
                 this.y = Math.random() * H2 - H2;
                 this.w = 4 + Math.random() * 6;
                 this.h = 3 + Math.random() * 4;
-                this.c = ['#d4899e','#b8a0d4','#e8b89a','#f0b8c8','#e74c3c','#2ecc71','#9b59b6','#e67e22','#3498db'][Math.floor(Math.random() * 9)];
+                this.c = ['#c884b0','#b890d0','#e8a0c0','#f0b8d8','#d4899e','#a070c0','#e74c3c','#2ecc71','#9b59b6'][Math.floor(Math.random() * 9)];
                 this.s = 1 + Math.random() * 2;
                 this.wind = (Math.random() - 0.5) * 0.6;
                 this.r = Math.random() * 360;
