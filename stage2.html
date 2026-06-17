@@ -53,12 +53,12 @@
         .s2-ov-btn {
             padding: 0.9rem 2.5rem; font-size: 1.2rem; font-weight: 700;
             font-family: var(--font-main); border: none; border-radius: 14px;
-            background: linear-gradient(135deg, #a060d0, #c870b0);
+            background: linear-gradient(135deg, #8844c0, #b858a8);
             color: #fff; cursor: pointer; transition: all 0.3s;
-            box-shadow: 0 0 30px rgba(160,96,208,0.3);
+            box-shadow: 0 0 30px rgba(136,68,192,0.3);
         }
         .s2-ov-btn:active { transform: scale(0.92); }
-        .s2-timer-num { font-size: 2.5rem; font-weight: 900; color: var(--accent-gold); margin: 0.5rem 0; }
+        .s2-timer-num { font-size: 2.5rem; font-weight: 900; color: #c870b8; margin: 0.5rem 0; }
 
         .s2-hint {
             position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
@@ -66,6 +66,30 @@
             opacity: 0.6; animation: blink 2s ease-in-out infinite; pointer-events: none;
         }
         @media (min-width: 769px) { .s2-hint { display: none; } }
+
+        .s2-dpad {
+            position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+            z-index: 10; display: grid;
+            grid-template-columns: 60px 60px 60px;
+            grid-template-rows: 60px 60px 60px;
+            gap: 2px;
+        }
+        @media (min-width: 769px) { .s2-dpad { display: none; } }
+        @media (max-width: 380px) { .s2-dpad { grid-template-columns: 50px 50px 50px; grid-template-rows: 50px 50px 50px; } }
+        .s2-dpad-btn {
+            border: none; border-radius: 14px;
+            background: rgba(136,68,192,0.15);
+            color: var(--text-primary); font-size: 1.5rem;
+            cursor: pointer; -webkit-tap-highlight-color: transparent;
+            user-select: none; touch-action: none;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.1s;
+        }
+        .s2-dpad-btn:active { background: rgba(136,68,192,0.35); }
+        .s2-dpad-up { grid-column: 2; grid-row: 1; }
+        .s2-dpad-left { grid-column: 1; grid-row: 2; }
+        .s2-dpad-right { grid-column: 3; grid-row: 2; }
+        .s2-dpad-down { grid-column: 2; grid-row: 3; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes blink { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
@@ -301,7 +325,7 @@
             }
 
             // Render
-            ctx.fillStyle = '#0a0a0f';
+            ctx.fillStyle = '#080312';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawArena();
             drawEnemy();
@@ -324,7 +348,7 @@
             document.getElementById('timerDisplay').textContent = timeLeft;
             timerInterval = setInterval(() => {
                 timeLeft--;
-                document.getElementById('timerDisplay').textContent = Math.ceil(timeLeft);
+                document.getElementById('timerDisplay').textContent = timeLeft;
                 if (timeLeft <= 0) {
                     gameActive = false; gameEnded = true;
                     clearInterval(timerInterval);
@@ -386,7 +410,7 @@
             initPositions();
             gameActive = true; gameEnded = false;
             startTimer();
-            ctx.fillStyle = '#0a0812';
+            ctx.fillStyle = '#080312';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawArena(); drawEnemy(); drawPlayer();
             if (isMobile) { animFrame = setTimeout(() => requestAnimationFrame(gameLoop), 16); }
@@ -429,7 +453,7 @@
         canvas.addEventListener('touchend', (e) => { e.preventDefault(); touchMoveX = 0; touchMoveY = 0; });
         canvas.addEventListener('touchcancel', () => { touchMoveX = 0; touchMoveY = 0; });
 
-            ctx.fillStyle = '#0a0512';
+            ctx.fillStyle = '#080312';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         drawArena(); drawEnemy(); drawPlayer();
     </script>

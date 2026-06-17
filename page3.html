@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background: radial-gradient(ellipse at center, #1a0a28 0%, #0a0512 70%);
+            background: radial-gradient(ellipse at center, #12051e 0%, #080312 70%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -35,7 +35,7 @@
             color: var(--text-primary);
             transition: border-color 0.3s;
         }
-        .p3-display.filled { border-color: var(--accent-gold); box-shadow: 0 0 20px var(--shadow-gold); }
+        .p3-display.filled { border-color: #8844c0; box-shadow: 0 0 20px rgba(136,68,192,0.3); }
 
         .p3-numpad {
             display: grid;
@@ -53,17 +53,17 @@
             display: flex; align-items: center; justify-content: center;
             -webkit-tap-highlight-color: transparent; user-select: none;
         }
-        .p3-num:active { transform: scale(0.92); background: rgba(212,137,158,0.15); }
+        .p3-num:active { transform: scale(0.92); background: rgba(136,68,192,0.15); }
         .p3-num.clear { background: rgba(231,76,60,0.15); color: #e74c3c; font-size: 1rem; }
 
         .p3-done {
             width: 100%; max-width: 250px; padding: 0.9rem;
             border: none; border-radius: 14px;
-            background: linear-gradient(135deg, var(--accent-gold), #f0b8c8);
-            color: #0a0a0f; font-size: 1.2rem;
+            background: linear-gradient(135deg, #8844c0, #b858a8);
+            color: #fff; font-size: 1.2rem;
             font-weight: 700; font-family: var(--font-main);
             cursor: pointer; transition: all 0.3s;
-            box-shadow: 0 0 20px var(--shadow-gold);
+            box-shadow: 0 0 20px rgba(136,68,192,0.3);
         }
         .p3-done:active { transform: scale(0.95); }
         .p3-done:disabled { opacity: 0.4; transform: none; box-shadow: none; }
@@ -113,10 +113,10 @@
             transition: all 0.3s;
         }
         .p3-date-field .value.active {
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 15px var(--shadow-gold);
+            border-color: #b858a8;
+            box-shadow: 0 0 15px rgba(184,88,168,0.3);
         }
-        .p3-date-field .value.filled { border-color: var(--accent-gold); }
+        .p3-date-field .value.filled { border-color: #8844c0; }
         .p3-date-sep {
             font-size: 1.5rem; color: var(--text-secondary);
             display: flex; align-items: center; padding: 0 2px; padding-top: 1.3rem;
@@ -133,9 +133,9 @@
         .p3-final-btn {
             padding: 0.9rem 2.5rem; font-size: 1.2rem; font-weight: 700;
             font-family: var(--font-main); border: none; border-radius: 14px;
-            background: linear-gradient(135deg, var(--accent-gold), #f0b8c8);
-            color: #0a0a0f; cursor: pointer; transition: all 0.3s;
-            box-shadow: 0 0 30px var(--shadow-gold); margin-top: 1.5rem;
+            background: linear-gradient(135deg, #8844c0, #b858a8);
+            color: #fff; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(136,68,192,0.3); margin-top: 1.5rem;
         }
         .p3-final-btn:active { transform: scale(0.92); }
 

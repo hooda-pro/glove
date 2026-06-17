@@ -17,18 +17,67 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressFill = document.querySelector('.progress-fill');
     const progressText = document.getElementById('progressText');
     const hero = document.getElementById('hero');
-    const passBox = document.querySelector('.pass-box-new');
-    const mainTitle = document.querySelector('.main-title-new');
-    const balloons = document.querySelectorAll('.balloon');
+    const passBox = document.getElementById('passBox');
+    const mainTitle = document.getElementById('mainTitle');
+    const introOverlay = document.getElementById('introOverlay');
+    const introName = document.getElementById('introName');
+    const introNameEn = document.getElementById('introNameEn');
+    const introSparkles = document.getElementById('introSparkles');
+    const loveOverlay = document.getElementById('loveOverlay');
+    const loveTextContainer = document.getElementById('loveTextContainer');
+    const loveEmojiRow = document.getElementById('loveEmojiRow');
+    const loveNextHint = document.getElementById('loveNextHint');
 
     const isMobile = window.innerWidth <= 768;
 
-    // ========== ROSE DELAYS ==========
-    balloons.forEach((b, i) => {
-        b.style.animationDelay = `${i * 0.15}s`;
-    });
+    // ========== INTRO ANIMATION ==========
+    function startIntro() {
+        const sparkleEmojis = ['✨','💜','🩷','🌸','⭐'];
+        for (let i = 0; i < 20; i++) {
+            const s = document.createElement('div');
+            s.className = 'intro-sparkle';
+            s.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+            s.style.left = Math.random() * 100 + '%';
+            s.style.top = Math.random() * 100 + '%';
+            s.style.fontSize = (0.6 + Math.random() * 1.2) + 'rem';
+            s.style.animationDuration = (2 + Math.random() * 3) + 's';
+            s.style.animationDelay = (Math.random() * 4) + 's';
+            introSparkles.appendChild(s);
+        }
 
-    // ========== BG PARTICLES (fewer on mobile) ==========
+        // Step 1: Show جَنات
+        introName.classList.add('show');
+
+        // Step 2: After 2.5s, fade it out and show Jannat
+        setTimeout(() => {
+            introName.classList.remove('show');
+            introName.classList.add('fade');
+            setTimeout(() => {
+                introName.style.display = 'none';
+                introNameEn.classList.add('show');
+            }, 800);
+        }, 2500);
+
+        // Step 3: After 2.5s more, fade everything and show password
+        setTimeout(() => {
+            introNameEn.classList.remove('show');
+            introNameEn.classList.add('fade');
+            setTimeout(() => {
+                introOverlay.classList.add('hidden');
+                overlay.classList.remove('hidden');
+                passBox.style.opacity = '1';
+                passBox.style.transform = 'translateY(0)';
+                setTimeout(() => passwordInput.focus(), 300);
+            }, 800);
+        }, 5000);
+
+        // Also remove overlay after full 5.8s if still showing
+        setTimeout(() => {
+            introOverlay.style.opacity = '0';
+        }, 5600);
+    }
+
+    // ========== BG PARTICLES (hearts & stars) ==========
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
     let W, H;
@@ -41,28 +90,65 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resize);
 
     let particles = [];
-    const particleCount = isMobile ? 40 : 100;
+    const particleCount = isMobile ? 30 : 70;
+    const ptclShapes = ['heart','star','diamond'];
+    const ptclColors = ['#8844c0','#b858a8','#d890b0','#a060d8','#c870b8','#e0a0c8'];
 
     class Particle {
         constructor() { this.reset(true); }
         reset(init) {
             this.x = Math.random() * W;
-            this.y = init ? Math.random() * H : H + 10;
-            this.r = 1 + Math.random() * (isMobile ? 1.5 : 2.5);
-            this.speed = 0.3 + Math.random() * 0.6;
-            this.wind = (Math.random() - 0.5) * 0.2;
-            this.alpha = 0.15 + Math.random() * 0.3;
+            this.y = init ? Math.random() * H : H + 20;
+            this.size = 3 + Math.random() * (isMobile ? 4 : 7);
+            this.speed = 0.2 + Math.random() * 0.5;
+            this.wind = (Math.random() - 0.5) * 0.15;
+            this.alpha = 0.1 + Math.random() * 0.2;
+            this.color = ptclColors[Math.floor(Math.random() * ptclColors.length)];
+            this.shape = ptclShapes[Math.floor(Math.random() * ptclShapes.length)];
+            this.rot = Math.random() * 360;
+            this.rotSpeed = (Math.random() - 0.5) * 1;
         }
         update() {
             this.y -= this.speed;
             this.x += this.wind;
-            if (this.y < -20) this.reset();
+            this.rot += this.rotSpeed;
+            if (this.y < -30) this.reset();
         }
         draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(212, 168, 83, ${this.alpha * 0.6})`;
-            ctx.fill();
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rot * Math.PI / 180);
+            ctx.globalAlpha = this.alpha;
+            ctx.fillStyle = this.color;
+            const s = this.size;
+
+            if (this.shape === 'heart') {
+                ctx.beginPath();
+                ctx.moveTo(0, s * 0.5);
+                ctx.bezierCurveTo(s * 0.8, -s * 0.3, s * 0.8, s * 0.8, 0, s);
+                ctx.bezierCurveTo(-s * 0.8, s * 0.8, -s * 0.8, -s * 0.3, 0, s * 0.5);
+                ctx.fill();
+            } else if (this.shape === 'star') {
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    const a = (i * 4 * Math.PI / 5) - Math.PI / 2;
+                    const px = Math.cos(a) * s;
+                    const py = Math.sin(a) * s;
+                    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(0, -s);
+                ctx.lineTo(s * 0.7, 0);
+                ctx.lineTo(0, s);
+                ctx.lineTo(-s * 0.7, 0);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            ctx.restore();
         }
     }
 
@@ -75,12 +161,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateParticles();
 
-    // ========== PASSWORD BOX ENTRANCE ==========
-    if (!sessionStorage.getItem('auth')) {
-        setTimeout(() => {
-            passBox.style.opacity = '1';
-            passBox.style.transform = 'translateY(0)';
-        }, 200);
+    // ========== FLOATING SHAPES (password bg) ==========
+    const shapeContainer = document.getElementById('shapeContainer');
+    if (shapeContainer) {
+        const shapeTypes = ['heart', 'star', 'diamond'];
+        for (let i = 0; i < (isMobile ? 8 : 16); i++) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'float-shape';
+            wrapper.style.setProperty('--x', (5 + Math.random() * 90) + '%');
+            wrapper.style.setProperty('--s', (2 + Math.random() * 5) + '');
+            wrapper.style.setProperty('--dur', (10 + Math.random() * 12) + 's');
+            wrapper.style.setProperty('--d', (Math.random() * 8) + 's');
+
+            const inner = document.createElement('i');
+            inner.className = 'float-shape-inner ' + shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+            wrapper.appendChild(inner);
+            shapeContainer.appendChild(wrapper);
+        }
     }
 
     // ========== PASSWORD ==========
@@ -96,10 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionStorage.setItem('auth', 'true');
 
             passBox.style.transition = 'all 0.4s ease';
-            passBox.style.borderColor = 'rgba(160, 96, 208, 0.6)';
-            passBox.style.boxShadow = '0 0 60px rgba(160, 96, 208, 0.2)';
+            passBox.style.borderColor = 'rgba(136, 68, 192, 0.6)';
+            passBox.style.boxShadow = '0 0 60px rgba(136, 68, 192, 0.2)';
             passBox.style.transform = 'scale(1.03)';
-            passBox.querySelector('.icon').textContent = '✅';
+            passBox.querySelector('.icon').textContent = '💜';
 
             setTimeout(() => {
                 overlay.style.transition = 'opacity 0.5s ease';
@@ -107,10 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     overlay.classList.add('hidden');
                     overlay.style.opacity = '';
-                    mainContent.classList.remove('hidden');
-                    document.body.style.overflow = 'auto';
-                    startHeroAnimation();
-                    startCardsObserver();
+                    startLoveMessages();
                     isProcessingPassword = false;
                 }, 500);
             }, 400);
@@ -122,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
             void passBox.offsetHeight;
             passBox.style.animation = 'shake 0.4s ease';
             passBox.style.borderColor = 'rgba(231, 76, 60, 0.4)';
-            passwordInput.style.borderColor = '';
             setTimeout(() => {
                 errorMsg.classList.add('hidden');
                 passBox.style.animation = '';
@@ -137,12 +230,104 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') checkPassword();
     });
 
+    // ========== AUTO-AUTH ==========
     if (sessionStorage.getItem('auth')) {
+        introOverlay.classList.add('hidden');
         overlay.classList.add('hidden');
         mainContent.classList.remove('hidden');
         document.body.style.overflow = 'auto';
         startHeroAnimation();
         startCardsObserver();
+    } else {
+        // Start intro animation
+        setTimeout(() => startIntro(), 300);
+    }
+
+    // ========== LOVE MESSAGES ==========
+    function startLoveMessages() {
+        loveOverlay.classList.remove('hidden');
+
+        const loveLines = [
+            { text: 'بحبك يا جَنات 🤍', delay: 500 },
+            { text: 'بنوتي الجميلة 💜', delay: 2500 },
+            { text: 'أنتِ كل حاجة جميلة في حياتي 🥺', delay: 4500 },
+            { text: 'بموت فيكي ي مزتي 🫶', delay: 6500 },
+            { text: 'وأنتِ أحلى وأجمل بنت في الدنيا 🌹', delay: 8500 },
+            { text: 'كل لحظة معاكي أجمل من اللي قبلها 💗', delay: 10500 },
+            { text: 'بعشقك مووت ي عمري 😘💜', delay: 12500 },
+        ];
+
+        const allEmojis = ['💜', '🌹', '🩷', '🥺', '🫶', '😘', '💗', '🌸', '✨', '😍'];
+
+        function typeMessage(text, container, speed = 50) {
+            return new Promise(resolve => {
+                container.textContent = '';
+                container.classList.add('show');
+                let idx = 0;
+                function type() {
+                    if (idx < text.length) {
+                        container.textContent += text[idx];
+                        idx++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
+        function showEmojisGradually(count) {
+            return new Promise(resolve => {
+                const shuffled = [...allEmojis].sort(() => Math.random() - 0.5);
+                let shown = 0;
+                function addOne() {
+                    if (shown < count) {
+                        const span = document.createElement('span');
+                        span.className = 'show';
+                        span.textContent = shuffled[shown % shuffled.length];
+                        loveEmojiRow.appendChild(span);
+                        shown++;
+                        setTimeout(addOne, 300 + Math.random() * 400);
+                    } else {
+                        resolve();
+                    }
+                }
+                addOne();
+            });
+        }
+
+        async function runLoveSequence() {
+            // Show each line with typewriter
+            for (const line of loveLines) {
+                await new Promise(r => setTimeout(r, line.delay - (loveLines.indexOf(line) > 0 ? loveLines[loveLines.indexOf(line) - 1].delay : 0)));
+                const el = document.createElement('div');
+                el.className = 'love-text';
+                loveTextContainer.appendChild(el);
+                await typeMessage(line.text, el, isMobile ? 60 : 45);
+                // Add random emojis after each line
+                await showEmojisGradually(2 + Math.floor(Math.random() * 3));
+            }
+
+            // After all messages, show pointing hint
+            await new Promise(r => setTimeout(r, 1000));
+            loveNextHint.classList.add('show');
+        }
+
+        runLoveSequence();
+
+        loveNextHint.addEventListener('click', () => {
+            loveOverlay.style.transition = 'opacity 0.5s ease';
+            loveOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loveOverlay.classList.add('hidden');
+                loveOverlay.style.opacity = '';
+                mainContent.classList.remove('hidden');
+                document.body.style.overflow = 'auto';
+                startHeroAnimation();
+                startCardsObserver();
+            }, 500);
+        });
     }
 
     // ========== FLOATING ROSES ==========
@@ -191,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Add charFade animation
     const styleSheet = document.createElement('style');
     styleSheet.textContent = `@keyframes charFade { from{opacity:0;transform:translateY(10px) scale(0.8)} to{opacity:1;transform:translateY(0) scale(1)} }`;
     document.head.appendChild(styleSheet);
@@ -203,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(cCanvas);
         const cCtx = cCanvas.getContext('2d');
         let cW, cH, cPieces = [];
-        const cCount = isMobile ? 40 : 70;
+        const cCount = isMobile ? 30 : 50;
 
         function cResize() { cW = cCanvas.width = window.innerWidth; cH = cCanvas.height = window.innerHeight; }
         cResize();
@@ -216,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.y = Math.random() * cH - cH;
                 this.w = 3 + Math.random() * 4;
                 this.h = 2 + Math.random() * 3;
-                this.c = ['#c884b0','#b890d0','#e8a0c0','#f0b8d8','#a070c0','#d4899e','#ffb8d0'][Math.floor(Math.random()*7)];
+                this.c = ['#a060d8','#8844c0','#d890b0','#b870a8','#c870b8','#b858a8','#e0a0c8'][Math.floor(Math.random()*7)];
                 this.s = 1 + Math.random() * 1.5;
                 this.wind = (Math.random() - 0.5) * 0.3;
                 this.r = Math.random() * 360;
@@ -279,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cardsRevealed) revealCards();
     });
 
-    // ========== CARDS FLIP (sequential) ==========
+    // ========== CARDS FLIP ==========
     const cardClicked = new Set();
     let nextExpectedIndex = 0;
 
@@ -297,13 +481,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Correct sequential card
             this.classList.add('flipped');
             flippedCount++;
             nextExpectedIndex++;
             updateProgress();
 
-            // Sparkle burst
             const rect = this.getBoundingClientRect();
             const cx = rect.left + rect.width / 2;
             const cy = rect.top + rect.height / 2;
